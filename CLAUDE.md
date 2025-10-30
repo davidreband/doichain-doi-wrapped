@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a Hardhat-based Ethereum development project called "wrapped-doichain" for creating a wrapped version of Doichain tokens. The project includes a basic ERC20-style token implementation.
+This is a Hardhat-based Ethereum development project called "doichain-doi-wrapped" for creating a wrapped version of Doichain tokens. The project includes a basic ERC20-style token implementation.
 
 ## Development Commands
 ```bash

@@ -52,7 +52,7 @@ The system provides secure token wrapping with **instant purchasing capability t
 1. Clone the repository:
 ```bash
 git clone <repository-url>
-cd wrapped-doichain
+cd doichain-doi-wrapped
 ```
 
 2. Install dependencies:
@@ -109,7 +109,7 @@ npx hardhat verify --network sepolia <CONTRACT_ADDRESS>
 ## Project Structure
 
 ```
-wrapped-doichain/
+doichain-doi-wrapped/
 ├── contracts/                          # Solidity smart contracts
 │   ├── WrappedDoichain.sol            # Bridge model ERC20 token
 │   ├── WrappedDoichainCustodial.sol   # Custodial model (WBTC-style)

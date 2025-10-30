@@ -11,7 +11,7 @@
 ```bash
 # Клонируйте репозиторий
 git clone <repository>
-cd wrapped-doichain
+cd doichain-doi-wrapped
 
 # Установите зависимости
 npm install
