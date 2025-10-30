@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Ethers v6</title>
+    <script src="ethers.umd.min.js"></script>
+</head>
+<body>
+    <h1>Test Ethers v6</h1>
+    <button onclick="testEthers()">Test Connection</button>
+    <div id="results"></div>
+
+    <script>
+        async function testEthers() {
+            const results = document.getElementById('results');
+            
+            try {
+                // Test basic ethers functions
+                results.innerHTML += '<p> Ethers loaded: ' + (typeof ethers !== 'undefined') + '</p>';
+                
+                // Test parseEther
+                const amount = ethers.parseEther('1.0');
+                results.innerHTML += '<p> parseEther works: ' + amount.toString() + '</p>';
+                
+                // Test formatEther
+                const formatted = ethers.formatEther(amount);
+                results.innerHTML += '<p> formatEther works: ' + formatted + '</p>';
+                
+                // Test MetaMask connection if available
+                if (typeof window.ethereum !== 'undefined') {
+                    const provider = new ethers.BrowserProvider(window.ethereum);
+                    results.innerHTML += '<p> BrowserProvider created</p>';
+                    
+                    // Get network
+                    const network = await provider.getNetwork();
+                    results.innerHTML += '<p> Network: ' + network.name + ' (chainId: ' + network.chainId + ')</p>';
+                } else {
+                    results.innerHTML += '<p> MetaMask not available</p>';
+                }
+                
+            } catch (error) {
+                results.innerHTML += '<p> Error: ' + error.message + '</p>';
+            }
+        }
+    </script>
+</body>
+</html>

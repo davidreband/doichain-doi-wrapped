@@ -1,0 +1,21 @@
+{
+  "network": "localhost",
+  "contractType": "custodial",
+  "contractAddress": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+  "admin": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+  "deployer": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+  "requiredConfirmations": 2,
+  "deploymentTime": "2025-10-28T07:40:23.482Z",
+  "txHash": "0x9b070bce44ef795bb5e2ecdea2c438e72107aa710fa2334226dad8ab456bcd02",
+  "constructorArgs": [
+    "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+    2
+  ],
+  "roles": {
+    "CUSTODIAN_ROLE": "0xe28434228950b641dbbc0178de89daa359a87c6ee0d8399aeace52a98fe902b9",
+    "MERCHANT_ROLE": "0x3c4a2d89ed8b4cf4347fec87df1c38410f8fc538bf9fd64c10f2717bc0feff36",
+    "PAUSER_ROLE": "0x65d7a28e3265b37a6474929f336521b332c1681b933f6cb9f3376673440d862a",
+    "RESERVE_MANAGER_ROLE": "0xcc938097bd07c9f1619d5e95c26b457140e80b889795c7c1cbd51a28005e02ac",
+    "DEFAULT_ADMIN_ROLE": "0x0000000000000000000000000000000000000000000000000000000000000000"
+  }
+}

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doichain - wDOI/USDT Pool</title>
+    <link rel="icon" type="image/png" href="assets/images/doi-logo.png">
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <script src="assets/js/ethers.umd.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="assets/images/doichain-logo.svg" alt="Doichain" style="height: 35px; margin-bottom: 10px;">
+            <h1>wDOI/USDT Pool</h1>
+            <p>Trade wDOI tokens with <span class="usdt-highlight">USDT</span> instantly via MetaMask</p>
+        </div>
+
+        <div class="main">
+            <!-- Wallet Connection Section -->
+            <div class="wallet-section">
+                <button id="connectBtn" class="connect-btn">
+                    Connect MetaMask Wallet
+                </button>
+                
+                <div id="walletInfo" class="wallet-info hidden">
+                    <div class="wallet-address" id="walletAddress"></div>
+                    <div class="balance-row">
+                        <span class="balance-label">Mock USDT Balance:</span>
+                        <span class="balance-value" id="usdtBalance">0.0000</span>
+                    </div>
+                    <div class="balance-row">
+                        <span class="balance-label">wDOI Balance:</span>
+                        <span class="balance-value" id="wdoiBalance">0.0000</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Swap Section -->
+            <div id="swapSection" class="swap-section hidden">
+                <div class="swap-card">
+                    <div class="swap-header">
+                        <span class="token-symbol usdt-highlight">
+                            <img src="assets/images/usdt-logo.svg" alt="USDT" class="token-logo">
+                            Mock USDT
+                        </span>
+                        <span class="token-balance">
+                            Balance: <span id="usdtBalanceSwap">0.0000</span>
+                            <button class="max-btn" onclick="setMaxUSDT()">MAX</button>
+                        </span>
+                    </div>
+                    <input 
+                        type="number" 
+                        id="fromInput" 
+                        class="amount-input" 
+                        placeholder="0.0" 
+                        step="0.0001"
+                        oninput="calculateSwap()"
+                    >
+                </div>
+
+                <div class="swap-arrow" onclick="switchDirection()">
+                    <button class="switch-btn" id="switchBtn">⇅</button>
+                </div>
+
+                <div class="swap-card">
+                    <div class="swap-header">
+                        <span class="token-symbol">
+                            <img src="assets/images/wdoi-logo.svg" alt="wDOI" class="token-logo">
+                            wDOI
+                        </span>
+                        <span class="token-balance">
+                            Balance: <span id="wdoiBalanceSwap">0.0000</span>
+                        </span>
+                    </div>
+                    <input 
+                        type="number" 
+                        id="toOutput" 
+                        class="amount-input" 
+                        placeholder="0.0" 
+                        readonly
+                    >
+                </div>
+
+                <div class="price-info" id="priceInfo">
+                    <div>Rate: 1 USDT = <span id="wdoiRate">0</span> wDOI</div>
+                    <div>Price Impact: <span id="priceImpact">0.00%</span></div>
+                    <div>Trading Fee: 0.3%</div>
+                </div>
+
+                <button id="swapBtn" class="swap-btn" onclick="executeSwap()">
+                    Enter USDT amount
+                </button>
+
+                <div id="loading" class="loading">
+                    <div class="spinner"></div>
+                    <div>Processing transaction...</div>
+                </div>
+
+                <div id="error" class="error hidden"></div>
+                <div id="success" class="success hidden"></div>
+                
+                <!-- Debug info -->
+                <div style="margin-top: 20px; font-size: 0.8em; color: #666; border-top: 1px solid #eee; padding-top: 10px;">
+                    <strong>Contract Addresses:</strong><br>
+                    wDOI: <code id="wdoiAddress"></code><br>
+                    USDT: <code id="usdtAddress"></code><br>
+                    Pool: <code id="poolAddress"></code><br>
+                    Network: <span id="networkInfo">Not connected</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/app.js"></script>
+</body>
+</html>

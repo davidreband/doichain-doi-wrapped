@@ -4,7 +4,42 @@ A Hardhat-based Ethereum smart contract project for creating a wrapped version o
 
 ## Overview
 
-This project implements a basic ERC20-style token contract that represents wrapped Doichain (wDOI) tokens on the Ethereum blockchain.
+This project implements a comprehensive wrapped token ecosystem for DOI tokens from the Doichain blockchain:
+
+1. **Bridge Model** (`WrappedDoichain.sol`) - Automated bridge with mint/burn functionality
+2. **Custodial Model** (`WrappedDoichainCustodial.sol`) - WBTC-style custodial architecture with cold storage
+3. **USDT Liquidity Pool** (`wDOIUSDTPool.sol`) - AMM for direct USDT ↔ wDOI trading
+4. **MetaMask Interface** (`frontend/index.html`) - Web UI for trading wDOI with USDT
+
+The system provides secure token wrapping with **instant purchasing capability through MetaMask** without complex conversion requests.
+
+### Key Features
+
+#### Bridge Model Features
+🌉 **Automated Bridge**: Direct mint/burn operations with blockchain confirmations
+🔐 **Role-Based Access**: Bridge operators and administrators
+⚡ **Fast Operations**: Immediate execution upon confirmation
+
+#### Custodial Model Features (WBTC-style)
+🏛️ **Custodial Architecture**: Licensed institutions hold DOI in cold storage
+🔐 **Multisig Security**: Multiple custodian confirmations required
+🏪 **Merchant System**: KYC/AML compliant token issuance
+❄️ **Cold Storage**: Offline wallet security for underlying assets
+📊 **Proof of Reserves**: Real-time verification of backing assets
+
+#### USDT Liquidity Pool Features (NEW! 🚀)
+🔄 **Instant Swaps**: Trade wDOI ↔ USDT directly through MetaMask
+🏊 **AMM Protocol**: Automated Market Maker with x*y=k formula
+💰 **LP Rewards**: Earn 0.3% fees by providing liquidity
+📱 **MetaMask Integration**: Bidirectional trading in your browser
+🛡️ **Slippage Protection**: Configurable slippage tolerance (5% default)
+💧 **USDT Pairing**: Stable trading against USDT for price stability
+
+#### Common Features
+⏸️ **Emergency Pause**: Ability to halt operations in emergency situations
+📊 **Statistics Tracking**: Monitor total deposits and withdrawals
+🛡️ **Security**: OpenZeppelin-based implementation with comprehensive testing
+🔍 **Event Logging**: Full audit trail of all operations
 
 ## Prerequisites
 
@@ -75,24 +110,62 @@ npx hardhat verify --network sepolia <CONTRACT_ADDRESS>
 
 ```
 wrapped-doichain/
-├── contracts/              # Solidity smart contracts
-│   └── WrappedDoichain.sol # Main ERC20 token contract
-├── scripts/                # Deployment and utility scripts
-├── test/                   # Contract tests
-├── hardhat.config.js       # Hardhat configuration
-├── .env.example           # Environment variables template
-└── README.md              # This file
+├── contracts/                          # Solidity smart contracts
+│   ├── WrappedDoichain.sol            # Bridge model ERC20 token
+│   ├── WrappedDoichainCustodial.sol   # Custodial model (WBTC-style)
+│   └── wDOIUSDTPool.sol               # USDT/wDOI AMM liquidity pool
+├── scripts/                           # Deployment and utility scripts
+│   ├── deploy.js                      # Bridge model deployment
+│   ├── deploy-custodial.js            # Custodial model deployment
+│   ├── test-deploy.js                 # USDT pool deployment
+│   ├── add-liquidity.js               # Add initial liquidity
+│   └── send-tokens-to-user.js         # Send test tokens
+├── test/                              # Contract tests (48 tests total)
+│   ├── WrappedDoichain.test.js        # Bridge model tests
+│   ├── WrappedDoichainCustodial.test.js # Custodial model tests
+│   └── wDOILiquidityPool.test.js      # Liquidity pool tests
+├── frontend/                          # MetaMask web interface
+│   └── index.html                     # wDOI ↔ USDT trading interface
+├── docs/                              # Documentation
+│   ├── CUSTODIAL_ARCHITECTURE.md     # Custodial model docs
+│   ├── LIQUIDITY_POOL_ARCHITECTURE.md # Pool architecture
+│   └── TECHNICAL_SPECIFICATION_RU.md # Russian tech specs
+├── deployments/                       # Deployment artifacts
+├── hardhat.config.js                  # Hardhat configuration
+├── .env.example                       # Environment variables template
+└── README.md                          # This file
 ```
 
 ## Contract Features
 
 The `WrappedDoichain` contract implements:
 
-- **ERC20 Standard**: Basic token functionality (transfer, approve, allowance)
+### Core Functionality
+- **ERC20 Standard**: Full ERC20 compatibility with transfer, approve, allowance
+- **Mint/Burn**: Create wDOI when DOI is deposited, burn wDOI when DOI is withdrawn
+- **Bridge Management**: Add/remove authorized bridge contracts
+- **Access Control**: Role-based permissions (Admin, Bridge, Pauser roles)
+
+### Token Properties
 - **Name**: "Wrapped Doichain"
-- **Symbol**: "wDOI"
+- **Symbol**: "wDOI"  
 - **Decimals**: 18
-- **Events**: Transfer and Approval events for transparency
+- **Supply**: Dynamic based on deposits/withdrawals
+
+### Security Features
+- **Pausable**: Emergency pause functionality
+- **Duplicate Protection**: Prevents double-processing of deposits
+- **Role Verification**: Only authorized bridges can mint/burn
+- **Event Logging**: Comprehensive event emission for transparency
+
+### Bridge Operations
+```solidity
+// Deposit DOI → Mint wDOI
+function deposit(address user, uint256 amount, string doichainTxHash)
+
+// Withdraw DOI ← Burn wDOI  
+function withdraw(address user, uint256 amount, string doichainAddress)
+```
 
 ## Development
 
@@ -100,23 +173,90 @@ The `WrappedDoichain` contract implements:
 
 ```bash
 # Compile contracts
-npm run compile
+npx hardhat compile
 
-# Run tests
-npm run test
+# Run tests (48 comprehensive tests)
+npx hardhat test
 
-# Deploy locally
-npm run deploy:local
+# Run only liquidity pool tests
+npx hardhat test test/wDOILiquidityPool.test.js
 
-# Deploy to testnet
-npm run deploy:sepolia
+# Deploy to local network
+npx hardhat node  # Terminal 1
+npx hardhat run scripts/deploy.js --network localhost  # Terminal 2
 
-# Deploy to mainnet
-npm run deploy:mainnet
+# Deploy Bridge Model to testnet
+npx hardhat run scripts/deploy.js --network sepolia
 
-# Verify contract
-npm run verify
+# Deploy Custodial Model to testnet  
+npx hardhat run scripts/deploy-custodial.js --network sepolia
+
+# Deploy USDT Liquidity Pool (NEW! 🚀)
+npx hardhat run scripts/test-deploy.js --network localhost
+
+# Deploy to mainnet  
+npx hardhat run scripts/deploy.js --network mainnet
+npx hardhat run scripts/deploy-custodial.js --network mainnet
+npx hardhat run scripts/deploy-pool.js --network mainnet
+
+# Verify on Etherscan
+npx hardhat verify --network sepolia DEPLOYED_ADDRESS "ADMIN_ADDRESS" "[]"
+
+# Manage bridges
+npx hardhat run scripts/manage-bridges.js list
+npx hardhat run scripts/manage-bridges.js add 0x1234...
+npx hardhat run scripts/manage-bridges.js remove 0x1234...
 ```
+
+### Trade wDOI ↔ USDT with MetaMask (NEW! 🚀)
+
+**Quick Start:**
+1. Start local Hardhat network: `npx hardhat node`
+2. Deploy contracts: `npx hardhat run scripts/test-deploy.js`
+3. Add liquidity: `npx hardhat run scripts/add-liquidity.js`
+4. Send test tokens: `npx hardhat run scripts/send-tokens-to-user.js`
+5. Open `frontend/index.html` in your browser
+6. Connect MetaMask and trade wDOI ↔ USDT instantly!
+
+**Features:**
+- 🔗 **One-Click Connection**: Connect MetaMask wallet
+- 💰 **Real-Time Balances**: View USDT and wDOI balances
+- 📊 **Live Pricing**: See current wDOI/USDT exchange rate
+- 🔄 **Bidirectional Swaps**: Trade wDOI ↔ USDT in both directions
+- 🛡️ **Slippage Protection**: 5% slippage tolerance
+- 📱 **Mobile Friendly**: Works on desktop and mobile browsers
+- ⇅ **Direction Toggle**: Switch between USDT→wDOI and wDOI→USDT
+
+```bash
+# After deploying contracts, simply open:
+firefox frontend/index.html
+# or
+chrome frontend/index.html
+```
+
+### Testing
+
+The project includes 48 comprehensive tests covering:
+
+**Bridge & Custodial Models (28 tests):**
+- Contract deployment and initialization
+- Bridge management (add/remove)
+- Deposit functionality with validation
+- Withdrawal functionality with validation  
+- Pause/unpause emergency controls
+- ERC20 standard compliance
+- Access control and permissions
+- Statistical tracking
+
+**USDT Liquidity Pool (20 tests):**
+- AMM functionality and price calculations
+- USDT ↔ wDOI swap operations
+- Liquidity provision and removal
+- Fee collection and distribution (0.3%)
+- Slippage protection and error handling
+- Administrative controls and emergency functions
+
+Run all tests: `npx hardhat test`
 
 ### Network Configuration
 
@@ -147,6 +287,44 @@ The project is configured for:
 ## License
 
 This project is licensed under the ISC License.
+
+## Usage Example
+
+```javascript
+const WrappedDoichain = await ethers.getContractFactory("WrappedDoichain");
+const contract = WrappedDoichain.attach(DEPLOYED_ADDRESS);
+
+// Add a bridge (admin only)
+await contract.addBridge(bridgeAddress);
+
+// Deposit DOI → Mint wDOI (bridge only)
+await contract.connect(bridge).deposit(
+  userAddress, 
+  ethers.parseEther("100"), 
+  "doichain_tx_hash_123"
+);
+
+// Withdraw DOI ← Burn wDOI (bridge only)  
+await contract.connect(bridge).withdraw(
+  userAddress,
+  ethers.parseEther("50"),
+  "DJq9KqHjq5L7MQ8dP4L5V7s6X8zT3nKbVm"
+);
+
+// Standard ERC20 operations
+await contract.connect(user).transfer(recipient, amount);
+await contract.connect(user).approve(spender, amount);
+```
+
+## Bridge Architecture
+
+```
+Doichain Network          Ethereum Network
+      │                        │
+   [DOI] ──── Lock ────► [Bridge Service] ────► Mint [wDOI]
+      │                        │
+   [DOI] ◄──── Release ──── [Bridge Service] ◄──── Burn [wDOI]
+```
 
 ## Resources
 

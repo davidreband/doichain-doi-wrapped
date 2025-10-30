@@ -1,0 +1,338 @@
+/* Doichain wDOI/USDT Pool - Stylesheet */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #18D685 0%, #0390CB 50%, #0B3E74 100%);
+    min-height: 100vh;
+    padding: 10px;
+}
+
+.container {
+    max-width: 500px;
+    margin: 0 auto;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(11, 62, 116, 0.2), 0 0 20px rgba(24, 214, 133, 0.1);
+    overflow: hidden;
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    animation: slideIn 0.8s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.header {
+    background: linear-gradient(135deg, #18D685 0%, #0390CB 100%);
+    color: white;
+    padding: 20px;
+    text-align: center;
+    border-radius: 20px 20px 0 0;
+    animation: glow 3s ease-in-out infinite;
+}
+
+@keyframes glow {
+    0%, 100% { 
+        box-shadow: 0 0 5px rgba(24, 214, 133, 0.5); 
+    }
+    50% { 
+        box-shadow: 0 0 20px rgba(24, 214, 133, 0.8), 0 0 30px rgba(3, 144, 203, 0.5); 
+    }
+}
+
+.header h1 {
+    font-size: 2em;
+    margin-bottom: 10px;
+}
+
+.header p {
+    opacity: 0.9;
+    font-size: 1.1em;
+}
+
+.main {
+    padding: 20px;
+}
+
+/* Wallet Section */
+.wallet-section {
+    margin-bottom: 20px;
+}
+
+.connect-btn {
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(135deg, #18D685 0%, #0390CB 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+}
+
+.connect-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(24, 214, 133, 0.4);
+    background: linear-gradient(135deg, #59F8BB 0%, #18D685 100%);
+}
+
+.connect-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.wallet-info {
+    background: linear-gradient(135deg, rgba(24, 214, 133, 0.1) 0%, rgba(3, 144, 203, 0.1) 100%);
+    border: 2px solid rgba(24, 214, 133, 0.3);
+    padding: 20px;
+    border-radius: 12px;
+    margin-top: 15px;
+    backdrop-filter: blur(10px);
+}
+
+.wallet-address {
+    font-family: 'Courier New', monospace;
+    font-size: 0.9em;
+    color: #0B3E74;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.balance-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.balance-label {
+    color: #0B3E74;
+    font-weight: 500;
+}
+
+.balance-value {
+    font-weight: bold;
+    color: #0390CB;
+}
+
+/* Swap Section */
+.swap-section {
+    margin-top: 20px;
+}
+
+.swap-card {
+    border: 2px solid rgba(3, 144, 203, 0.3);
+    border-radius: 16px;
+    padding: 15px;
+    margin-bottom: 15px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(89, 248, 187, 0.1) 100%);
+    backdrop-filter: blur(10px);
+}
+
+.swap-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.token-symbol {
+    font-weight: bold;
+    color: #0B3E74;
+    font-size: 1.1em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.token-logo {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+}
+
+.token-balance {
+    font-size: 0.9em;
+    color: #0390CB;
+}
+
+.amount-input {
+    width: 100%;
+    border: none;
+    outline: none;
+    font-size: 1.5em;
+    font-weight: bold;
+    background: transparent;
+}
+
+.swap-arrow {
+    text-align: center;
+    margin: 10px 0;
+    position: relative;
+}
+
+.switch-btn {
+    background: linear-gradient(135deg, #18D685 0%, #0390CB 100%);
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    color: white;
+    font-size: 1.5em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(24, 214, 133, 0.3);
+}
+
+.switch-btn:hover {
+    transform: rotate(180deg) scale(1.1);
+    box-shadow: 0 8px 25px rgba(24, 214, 133, 0.4);
+}
+
+.price-info {
+    background: linear-gradient(135deg, rgba(11, 62, 116, 0.1) 0%, rgba(3, 144, 203, 0.1) 100%);
+    border: 1px solid rgba(3, 144, 203, 0.3);
+    padding: 12px;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    font-size: 0.9em;
+    color: #0B3E74;
+    font-weight: 500;
+}
+
+.swap-btn {
+    width: 100%;
+    padding: 18px;
+    background: linear-gradient(135deg, #18D685 0%, #0390CB 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.2em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(24, 214, 133, 0.3);
+}
+
+.swap-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(24, 214, 133, 0.4);
+    background: linear-gradient(135deg, #59F8BB 0%, #18D685 100%);
+}
+
+.swap-btn:disabled {
+    background: #94a3b8;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Loading and Spinner */
+.loading {
+    display: none;
+    text-align: center;
+    margin: 20px 0;
+    color: #0390CB;
+}
+
+.spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(3, 144, 203, 0.3);
+    border-top: 3px solid #18D685;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Status Messages */
+.error {
+    background: #fef2f2;
+    color: #dc2626;
+    padding: 15px;
+    border-radius: 12px;
+    margin: 15px 0;
+    border-left: 4px solid #dc2626;
+}
+
+.success {
+    background: #f0fdf4;
+    color: #166534;
+    padding: 15px;
+    border-radius: 12px;
+    margin: 15px 0;
+    border-left: 4px solid #16a34a;
+}
+
+/* Utility Classes */
+.hidden {
+    display: none;
+}
+
+.max-btn {
+    background: linear-gradient(135deg, rgba(24, 214, 133, 0.1) 0%, rgba(3, 144, 203, 0.1) 100%);
+    border: 1px solid rgba(24, 214, 133, 0.3);
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: 0.8em;
+    cursor: pointer;
+    color: #0390CB;
+    font-weight: bold;
+    transition: all 0.2s ease;
+}
+
+.max-btn:hover {
+    background: linear-gradient(135deg, rgba(24, 214, 133, 0.2) 0%, rgba(3, 144, 203, 0.2) 100%);
+    border-color: rgba(24, 214, 133, 0.5);
+}
+
+.usdt-highlight {
+    color: #18D685;
+    font-weight: bold;
+    text-shadow: 0 0 10px rgba(24, 214, 133, 0.3);
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+    .container {
+        margin: 5px;
+        border-radius: 15px;
+    }
+    
+    .main {
+        padding: 15px;
+    }
+    
+    .header {
+        padding: 15px;
+    }
+    
+    .header h1 {
+        font-size: 1.6em;
+    }
+    
+    .amount-input {
+        font-size: 1.3em;
+    }
+}
