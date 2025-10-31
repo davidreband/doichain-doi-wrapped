@@ -320,7 +320,9 @@ contract wDOIUSDTPool is ERC20, Ownable, ReentrancyGuard, Pausable {
      */
     function getWDOIPrice() external view returns (uint256) {
         if (reserveWDOI == 0) return 0;
-        return (reserveUSDT * 1e18) / reserveWDOI;
+        // USDT has 6 decimals, wDOI has 18 decimals
+        // Multiply USDT by 1e30 to normalize: (6 + 30) - 18 = 18 decimals result
+        return (reserveUSDT * 1e30) / reserveWDOI;
     }
     
     /**
@@ -337,7 +339,7 @@ contract wDOIUSDTPool is ERC20, Ownable, ReentrancyGuard, Pausable {
         _reserveWDOI = reserveWDOI;
         _reserveUSDT = reserveUSDT;
         _totalSupply = totalSupply();
-        _wdoiPrice = reserveWDOI > 0 ? (reserveUSDT * 1e18) / reserveWDOI : 0;
+        _wdoiPrice = reserveWDOI > 0 ? (reserveUSDT * 1e30) / reserveWDOI : 0;
         _accFeesWDOI = accumulatedFeesWDOI;
         _accFeesUSDT = accumulatedFeesUSDT;
     }

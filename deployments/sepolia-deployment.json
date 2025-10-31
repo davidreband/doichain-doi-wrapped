@@ -1,0 +1,25 @@
+{
+  "mockUSDT": {
+    "address": "0x584d5D62adaa8123E1726777AA6EEa154De6c76f",
+    "deployer": "0x60eAe063F1Fd429814cA4C65767fDF0d8991506E",
+    "network": "sepolia",
+    "deploymentTime": "2025-10-31T07:54:00.930Z"
+  },
+  "wdoiCustodial": {
+    "address": "0x3e67e32FeE4FA2788672B856fB22670c63Bd0ac5",
+    "admin": "0x60eAe063F1Fd429814cA4C65767fDF0d8991506E",
+    "requiredConfirmations": 2,
+    "deployer": "0x60eAe063F1Fd429814cA4C65767fDF0d8991506E",
+    "network": "sepolia",
+    "deploymentTime": "2025-10-31T07:54:13.458Z"
+  },
+  "usdtPool": {
+    "address": "0xf683c80D070ED88AbC4321F7E1d4807C87cDca2C",
+    "wdoiToken": "0x3e67e32FeE4FA2788672B856fB22670c63Bd0ac5",
+    "usdtToken": "0x584d5D62adaa8123E1726777AA6EEa154De6c76f",
+    "owner": "0x60eAe063F1Fd429814cA4C65767fDF0d8991506E",
+    "deployer": "0x60eAe063F1Fd429814cA4C65767fDF0d8991506E",
+    "network": "sepolia",
+    "deploymentTime": "2025-10-31T07:54:25.984Z"
+  }
+}

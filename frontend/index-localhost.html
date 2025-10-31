@@ -3,21 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Doichain - wDOI/USDT Pool</title>
+    <title>Doichain - wDOI/USDT Pool (Localhost)</title>
     <link rel="icon" type="image/png" href="assets/images/doi-logo.png">
     <link rel="stylesheet" href="assets/css/styles.css">
     <script src="assets/js/ethers.umd.min.js"></script>
 </head>
 <body>
     <!-- Network Configuration Warning -->
-    <div id="networkWarning" style="background: #fff3cd; padding: 10px; margin: 10px 0; border: 1px solid #ffeaa7; border-radius: 5px;">
-      <strong>⚠️ Testnet Mode:</strong> This interface is configured for SEPOLIA testnet.
-      Make sure MetaMask is connected to the sepolia network.
+    <div id="networkWarning" style="background: #e3f2fd; padding: 10px; margin: 10px 0; border: 1px solid #2196f3; border-radius: 5px;">
+      <strong>🔧 Development Mode:</strong> This interface is configured for LOCALHOST development.
+      Make sure Hardhat node is running and MetaMask is connected to localhost:8545.
     </div>
     <div class="container">
         <div class="header">
             <img src="assets/images/doichain-logo.svg" alt="Doichain" style="height: 35px; margin-bottom: 10px;">
-            <h1>wDOI/USDT Pool</h1>
+            <h1>wDOI/USDT Pool (Local)</h1>
             <p>Trade wDOI tokens with <span class="usdt-highlight">USDT</span> instantly via MetaMask</p>
         </div>
 
@@ -31,7 +31,7 @@
                 <div id="walletInfo" class="wallet-info hidden">
                     <div class="wallet-address" id="walletAddress"></div>
                     <div class="balance-row">
-                        <span class="balance-label">sUSDT Balance:</span>
+                        <span class="balance-label">Mock USDT Balance:</span>
                         <span class="balance-value" id="usdtBalance">0.0000</span>
                     </div>
                     <div class="balance-row">
@@ -47,7 +47,7 @@
                     <div class="swap-header">
                         <span class="token-symbol usdt-highlight">
                             <img src="assets/images/usdt-logo.svg" alt="USDT" class="token-logo">
-                            s USDT
+                            Mock USDT
                         </span>
                         <span class="token-balance">
                             Balance: <span id="usdtBalanceSwap">0.0000</span>
@@ -118,7 +118,7 @@
     </div>
 
     <!-- Load configuration first, then app -->
-    <script src="assets/js/config-sepolia.js"></script>
+    <script src="assets/js/config-localhost.js"></script>
     <script src="assets/js/app.js"></script>
 </body>
 </html>

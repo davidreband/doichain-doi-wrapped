@@ -9,7 +9,8 @@ This project implements a comprehensive wrapped token ecosystem for DOI tokens f
 1. **Bridge Model** (`WrappedDoichain.sol`) - Automated bridge with mint/burn functionality
 2. **Custodial Model** (`WrappedDoichainCustodial.sol`) - WBTC-style custodial architecture with cold storage
 3. **USDT Liquidity Pool** (`wDOIUSDTPool.sol`) - AMM for direct USDT ↔ wDOI trading
-4. **MetaMask Interface** (`frontend/index.html`) - Web UI for trading wDOI with USDT
+4. **Mock USDT** (`MockUSDT.sol`) - Test token for development and testing
+5. **MetaMask Interface** (`frontend/index.html`) - Web UI for trading wDOI with USDT
 
 The system provides secure token wrapping with **instant purchasing capability through MetaMask** without complex conversion requests.
 
@@ -113,17 +114,18 @@ doichain-doi-wrapped/
 ├── contracts/                          # Solidity smart contracts
 │   ├── WrappedDoichain.sol            # Bridge model ERC20 token
 │   ├── WrappedDoichainCustodial.sol   # Custodial model (WBTC-style)
-│   └── wDOIUSDTPool.sol               # USDT/wDOI AMM liquidity pool
+│   ├── wDOIUSDTPool.sol               # USDT/wDOI AMM liquidity pool
+│   └── MockUSDT.sol                   # Mock USDT token for testing
 ├── scripts/                           # Deployment and utility scripts
 │   ├── deploy.js                      # Bridge model deployment
 │   ├── deploy-custodial.js            # Custodial model deployment
 │   ├── test-deploy.js                 # USDT pool deployment
 │   ├── add-liquidity.js               # Add initial liquidity
 │   └── send-tokens-to-user.js         # Send test tokens
-├── test/                              # Contract tests (48 tests total)
+├── test/                              # Contract tests
 │   ├── WrappedDoichain.test.js        # Bridge model tests
 │   ├── WrappedDoichainCustodial.test.js # Custodial model tests
-│   └── wDOILiquidityPool.test.js      # Liquidity pool tests
+│   └── wDOIUSDTPool.test.js           # USDT liquidity pool tests
 ├── frontend/                          # MetaMask web interface
 │   └── index.html                     # wDOI ↔ USDT trading interface
 ├── docs/                              # Documentation
@@ -175,11 +177,11 @@ function withdraw(address user, uint256 amount, string doichainAddress)
 # Compile contracts
 npx hardhat compile
 
-# Run tests (48 comprehensive tests)
+# Run tests
 npx hardhat test
 
-# Run only liquidity pool tests
-npx hardhat test test/wDOILiquidityPool.test.js
+# Run only USDT pool tests
+npx hardhat test test/wDOIUSDTPool.test.js
 
 # Deploy to local network
 npx hardhat node  # Terminal 1
@@ -236,7 +238,7 @@ chrome frontend/index.html
 
 ### Testing
 
-The project includes 48 comprehensive tests covering:
+The project includes comprehensive tests covering:
 
 **Bridge & Custodial Models (28 tests):**
 - Contract deployment and initialization

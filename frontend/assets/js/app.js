@@ -1,35 +1,11 @@
 // Doichain wDOI/USDT Pool - JavaScript Application
 
-// Contract addresses (localhost deployment)
-const WDOI_TOKEN_ADDRESS = '0x5302E909d1e93e30F05B5D6Eea766363D14F9892'; // Latest wDOI
-const USDT_TOKEN_ADDRESS = '0x986aaa537b8cc170761FDAC6aC4fc7F9d8a20A8C'; // Latest Mock USDT
-const USDT_POOL_ADDRESS = '0xe1Fd27F4390DcBE165f4D60DBF821e4B9Bb02dEd'; // Latest working pool
+// Contract addresses - loaded from config file
+const WDOI_TOKEN_ADDRESS = CONTRACT_ADDRESSES.WDOI_TOKEN;
+const USDT_TOKEN_ADDRESS = CONTRACT_ADDRESSES.USDT_TOKEN; 
+const USDT_POOL_ADDRESS = CONTRACT_ADDRESSES.USDT_POOL;
 
-// Contract ABIs (simplified)
-const WDOI_ABI = [
-    "function balanceOf(address) view returns (uint256)",
-    "function symbol() view returns (string)",
-    "function decimals() view returns (uint8)",
-    "function approve(address, uint256) returns (bool)"
-];
-
-const USDT_ABI = [
-    "function balanceOf(address) view returns (uint256)",
-    "function symbol() view returns (string)",
-    "function decimals() view returns (uint8)",
-    "function approve(address, uint256) returns (bool)",
-    "function transfer(address, uint256) returns (bool)",
-    "function transferFrom(address, address, uint256) returns (bool)"
-];
-
-const POOL_ABI = [
-    "function getPoolInfo() view returns (uint256, uint256, uint256, uint256, uint256, uint256)",
-    "function getAmountOut(uint256, uint256, uint256) view returns (uint256)",
-    "function swapUSDTForWDOI(uint256, uint256)",
-    "function swapWDOIForUSDT(uint256, uint256)",
-    "function reserveWDOI() view returns (uint256)",
-    "function reserveUSDT() view returns (uint256)"
-];
+// Contract ABIs are loaded from config file (config-sepolia.js)
 
 let provider, signer, userAddress;
 let wdoiContract, usdtContract, poolContract;
@@ -71,8 +47,9 @@ async function connectWallet() {
         console.log('Connected to network:', network.chainId.toString());
         document.getElementById('networkInfo').textContent = `Chain ID: ${network.chainId}`;
         
-        if (Number(network.chainId) !== 31337) {
-            showError(`Warning: Expected Hardhat Local (Chain ID: 31337), but connected to Chain ID: ${network.chainId}. Contracts may not work.`);
+        const expectedChainId = NETWORK_CONFIG.chainId;
+        if (Number(network.chainId) !== Number(expectedChainId)) {
+            showError(`Warning: Expected ${NETWORK_CONFIG.chainName} (Chain ID: ${Number(expectedChainId)}), but connected to Chain ID: ${network.chainId}. Please switch networks.`);
             // Don't return - allow connection but show warning
         }
         
@@ -131,8 +108,8 @@ async function updateBalances() {
         const usdtBal = await usdtContract.balanceOf(userAddress);
         const wdoiBal = await wdoiContract.balanceOf(userAddress);
 
-        // Both contracts use 18 decimals
-        usdtBalance = parseFloat(ethers.formatEther(usdtBal));
+        // USDT uses 6 decimals, wDOI uses 18 decimals
+        usdtBalance = parseFloat(ethers.formatUnits(usdtBal, 6));
         wdoiBalance = parseFloat(ethers.formatEther(wdoiBal));
 
         // Update main wallet info balances
@@ -171,7 +148,7 @@ async function updatePoolInfo() {
 
         const poolInfo = await poolContract.getPoolInfo();
         reserveWDOI = parseFloat(ethers.formatEther(poolInfo[0]));
-        reserveUSDT = parseFloat(ethers.formatEther(poolInfo[1])); // Using 18 decimals for Mock USDT
+        reserveUSDT = parseFloat(ethers.formatUnits(poolInfo[1], 6)); // USDT uses 6 decimals
 
         // Update rate display (either wdoiRate or exchangeRate depending on interface state)
         const rate = reserveUSDT > 0 ? (reserveWDOI / reserveUSDT).toFixed(6) : '0';
@@ -243,7 +220,7 @@ function updateSwapInterface() {
     
     if (isUSDTToWDOI) {
         // USDT -> wDOI
-        fromCard.querySelector('.token-symbol').innerHTML = '<img src="assets/images/usdt-logo.svg" alt="USDT" class="token-logo">Mock USDT';
+        fromCard.querySelector('.token-symbol').innerHTML = '<img src="assets/images/usdt-logo.svg" alt="USDT" class="token-logo">s USDT';
         fromCard.querySelector('.token-symbol').className = 'token-symbol usdt-highlight';
         
         const fromBalance = fromCard.querySelector('.token-balance');
@@ -268,7 +245,7 @@ function updateSwapInterface() {
         const fromBalance = fromCard.querySelector('.token-balance');
         fromBalance.innerHTML = `Balance: <span id="fromBalanceDisplay">0.0000</span><button class="max-btn" onclick="setMaxWDOI()">MAX</button>`;
         
-        toCard.querySelector('.token-symbol').innerHTML = '<img src="assets/images/usdt-logo.svg" alt="USDT" class="token-logo">Mock USDT';
+        toCard.querySelector('.token-symbol').innerHTML = '<img src="assets/images/usdt-logo.svg" alt="USDT" class="token-logo">s USDT';
         toCard.querySelector('.token-symbol').className = 'token-symbol usdt-highlight';
         
         const toBalance = toCard.querySelector('.token-balance');
@@ -333,14 +310,30 @@ async function calculateSwap() {
         }
         
         // Calculate output using AMM formula
-        const inputAmountWei = ethers.parseEther(inputAmount.toString());
+        let inputAmountWei, fromReserveWei, toReserveWei;
+        
+        if (isUSDTToWDOI) {
+            // USDT input (6 decimals), wDOI output (18 decimals)
+            inputAmountWei = ethers.parseUnits(inputAmount.toString(), 6);
+            fromReserveWei = ethers.parseUnits(fromReserve.toString(), 6);
+            toReserveWei = ethers.parseEther(toReserve.toString());
+        } else {
+            // wDOI input (18 decimals), USDT output (6 decimals)
+            inputAmountWei = ethers.parseEther(inputAmount.toString());
+            fromReserveWei = ethers.parseEther(fromReserve.toString());
+            toReserveWei = ethers.parseUnits(toReserve.toString(), 6);
+        }
         
         try {
-            const outputWei = await poolContract.getAmountOut(inputAmountWei, 
-                ethers.parseEther(fromReserve.toString()),
-                ethers.parseEther(toReserve.toString())
-            );
-            outputAmount = parseFloat(ethers.formatEther(outputWei));
+            const outputWei = await poolContract.getAmountOut(inputAmountWei, fromReserveWei, toReserveWei);
+            
+            if (isUSDTToWDOI) {
+                // wDOI output (18 decimals)
+                outputAmount = parseFloat(ethers.formatEther(outputWei));
+            } else {
+                // USDT output (6 decimals)
+                outputAmount = parseFloat(ethers.formatUnits(outputWei, 6));
+            }
         } catch (poolError) {
             // Fallback calculation
             outputAmount = inputAmount * (toReserve / fromReserve) * 0.997; // 0.3% fee
@@ -420,11 +413,13 @@ async function executeSwap() {
             outputToken: isUSDTToWDOI ? 'wDOI' : 'USDT'
         });
 
-        const inputAmountWei = ethers.parseEther(inputAmount.toString());
-        const minOutputWei = ethers.parseEther((outputAmount * 0.95).toString()); // 5% slippage
-
+        let inputAmountWei, minOutputWei;
+        
         if (isUSDTToWDOI) {
-            // USDT -> wDOI swap
+            // USDT -> wDOI: input in 6 decimals, output in 18 decimals
+            inputAmountWei = ethers.parseUnits(inputAmount.toString(), 6);
+            minOutputWei = ethers.parseEther((outputAmount * 0.95).toString()); // 5% slippage
+            
             const usdtWithSigner = usdtContract.connect(signer);
             const approveTx = await usdtWithSigner.approve(USDT_POOL_ADDRESS, inputAmountWei);
             showSuccess('USDT approval submitted...');
@@ -439,7 +434,11 @@ async function executeSwap() {
             await tx.wait();
             showSuccess(`Swap successful! You received ${outputAmount.toFixed(4)} wDOI for ${inputAmount} USDT`);
         } else {
-            // wDOI -> USDT swap
+            // wDOI -> USDT: input in 18 decimals, output in 6 decimals
+            inputAmountWei = ethers.parseEther(inputAmount.toString());
+            const minOutputAmount = (outputAmount * 0.95).toFixed(6); // Round to 6 decimals for USDT
+            minOutputWei = ethers.parseUnits(minOutputAmount, 6); // 5% slippage
+            
             const wdoiWithSigner = wdoiContract.connect(signer);
             const approveTx = await wdoiWithSigner.approve(USDT_POOL_ADDRESS, inputAmountWei);
             showSuccess('wDOI approval submitted...');
