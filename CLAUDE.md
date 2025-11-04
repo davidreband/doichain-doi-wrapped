@@ -7,6 +7,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 This is a Hardhat-based Ethereum development project called "doichain-doi-wrapped" for creating a wrapped version of Doichain tokens. The project includes a basic ERC20-style token implementation.
 
 ## Development Commands
+
+### Smart Contracts
 ```bash
 # Compile smart contracts
 npx hardhat compile
@@ -24,6 +26,31 @@ npx hardhat run scripts/deploy.js --network <network-name>
 # Verify contracts on Etherscan (after deployment)
 npx hardhat verify --network <network-name> <contract-address> [constructor-args]
 ```
+
+### Frontend Applications
+
+#### SvelteKit Web App (port 5173)
+```bash
+# Navigate to web-app directory
+cd web-app
+
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+
+# Build for production
+npm run build
+
+# Preview production build
+npm run preview
+```
+
+#### Static Frontend (for testing)
+The `frontend/` directory contains static HTML files for direct testing:
+- `frontend/index.html` - Sepolia testnet version
+- `frontend/index-localhost.html` - Local development version
 
 ## Project Structure
 

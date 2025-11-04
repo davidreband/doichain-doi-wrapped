@@ -1,0 +1,48 @@
+{
+  "meta": {
+    "title": "Doichain wDOI/USDT Pool",
+    "description": "Торгуйте токенами wDOI с USDT мгновенно через MetaMask"
+  },
+  "nav": {
+    "selectLanguage": "Выберите язык",
+    "toggleTheme": "Переключить тему"
+  },
+  "footer": {
+    "privacy": "Политика конфиденциальности",
+    "terms": "Условия использования",
+    "cookies": "Политика cookie",
+    "imprint": "Выходные данные",
+    "about": "О проекте", 
+    "docs": "Документация",
+    "rights": "Все права защищены."
+  },
+  "swap": {
+    "title": "wDOI/USDT Pool",
+    "subtitle": "Торгуйте токенами wDOI с USDT мгновенно через MetaMask",
+    "connectWallet": "Подключить MetaMask кошелек",
+    "disconnect": "Отключить",
+    "balance": "Баланс",
+    "enterAmount": "Введите количество {token}",
+    "swapButton": "Обменять {fromAmount} {fromToken} на {toAmount} {toToken}",
+    "insufficientBalance": "Недостаточно {token}",
+    "rate": "Курс",
+    "priceImpact": "Влияние на цену",
+    "tradingFee": "Комиссия за торговлю",
+    "max": "МАКС",
+    "processing": "Обработка транзакции...",
+    "success": "Обмен успешен! Вы получили {amount} {token}",
+    "error": "Обмен не удался: {error}"
+  },
+  "network": {
+    "warning": "Предупреждение: Ожидается {expected}, но подключен Chain ID: {actual}. Пожалуйста, переключите сеть.",
+    "testnetMode": "Режим тестнета: Этот интерфейс настроен для тестнета SEPOLIA.",
+    "connectSepolia": "Убедитесь, что MetaMask подключен к сети Sepolia."
+  },
+  "pages": {
+    "home": "Главная",
+    "about": "О проекте",
+    "docs": "Документация",
+    "faq": "Вопросы и ответы", 
+    "security": "Безопасность"
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "meta": {
+    "title": "Doichain wDOI/USDT Pool",
+    "description": "Trade wDOI tokens with USDT instantly via MetaMask"
+  },
+  "nav": {
+    "selectLanguage": "Select Language",
+    "toggleTheme": "Toggle Theme"
+  },
+  "footer": {
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service", 
+    "cookies": "Cookie Policy",
+    "imprint": "Imprint",
+    "about": "About",
+    "docs": "Documentation",
+    "rights": "All rights reserved."
+  },
+  "swap": {
+    "title": "wDOI/USDT Pool",
+    "subtitle": "Trade wDOI tokens with USDT instantly via MetaMask",
+    "connectWallet": "Connect MetaMask Wallet",
+    "disconnect": "Disconnect",
+    "balance": "Balance",
+    "enterAmount": "Enter {token} amount",
+    "swapButton": "Swap {fromAmount} {fromToken} for {toAmount} {toToken}",
+    "insufficientBalance": "Insufficient {token} Balance",
+    "rate": "Rate",
+    "priceImpact": "Price Impact",
+    "tradingFee": "Trading Fee",
+    "max": "MAX",
+    "processing": "Processing transaction...",
+    "success": "Swap successful! You received {amount} {token}",
+    "error": "Swap failed: {error}"
+  },
+  "network": {
+    "warning": "Warning: Expected {expected} but connected to Chain ID: {actual}. Please switch networks.",
+    "testnetMode": "Testnet Mode: This interface is configured for SEPOLIA testnet.",
+    "connectSepolia": "Make sure MetaMask is connected to the Sepolia network."
+  },
+  "pages": {
+    "home": "Home",
+    "about": "About",
+    "docs": "Documentation",
+    "faq": "FAQ",
+    "security": "Security"
+  }
+}
