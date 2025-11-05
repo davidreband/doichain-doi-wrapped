@@ -1,1 +1,1 @@
-export { default as component } from "../../../../src/routes/imprint/+page.svelte";
+export { default as component } from "../../../../src/routes/cookies/+page.svelte";

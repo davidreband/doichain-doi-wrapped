@@ -47,6 +47,7 @@
 			<div class="nav-menu">
 				<a href="/" class="nav-link">{$_('nav.swap', { default: 'Swap' })}</a>
 				<a href="/liquidity" class="nav-link">{$_('nav.liquidity', { default: 'Liquidity' })}</a>
+				<a href="/bridge" class="nav-link">{$_('nav.bridge', { default: 'Bridge' })}</a>
 			</div>
 			
 			<div class="nav-controls">
