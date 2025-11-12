@@ -4,7 +4,27 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "npx hardhat test",
+    "compile": "npx hardhat compile",
+    "deploy:sepolia": "npx hardhat run scripts/deploy-v2.js --network sepolia",
+    "deploy:local": "npx hardhat run scripts/deploy-v2.js --network localhost",
+    "deploy:v3:sepolia": "npx hardhat run scripts/deploy-v3.js --network sepolia",
+    "deploy:v3:local": "npx hardhat run scripts/deploy-v3.js --network localhost",
+    "deploy:custodial:sepolia": "npx hardhat run scripts/deploy-custodial.js --network sepolia",
+    "verify:sepolia": "npx hardhat verify --network sepolia",
+    "check-liquidity": "npx hardhat run scripts/check-liquidity-status.js",
+    "check-liquidity:sepolia": "npx hardhat run scripts/check-liquidity-status.js --network sepolia",
+    "manage-liquidity": "npx hardhat run scripts/manage-liquidity.js",
+    "manage-liquidity:sepolia": "npx hardhat run scripts/manage-liquidity.js --network sepolia",
+    "update-doi-price": "npx hardhat run scripts/update-doi-price-coinpaprika.js --network sepolia",
+    "pool-maintenance": "npx hardhat run scripts/pool-price-maintenance.js --network sepolia",
+    "price-keeper": "npx hardhat run scripts/automated-price-keeper.js --network sepolia",
+    "explain-amm": "npx hardhat run scripts/explain-amm-mechanics.js",
+    "deploy-price-oracle": "npx hardhat run scripts/deploy-price-oracle.js --network sepolia",
+    "demo-price-keeper": "npx hardhat run scripts/demo-price-keeper.js --network sepolia",
+    "check-price-system": "npx hardhat run scripts/check-price-system.js --network sepolia",
+    "simulate-price-maintenance": "npx hardhat run scripts/simulate-price-maintenance.js",
+    "explain-price-mechanics": "npx hardhat run scripts/explain-price-maintenance-mechanics.js"
   },
   "keywords": [],
   "author": "",
@@ -17,6 +37,8 @@
   },
   "dependencies": {
     "@openzeppelin/contracts": "^5.4.0",
+    "@openzeppelin/contracts-upgradeable": "^5.4.0",
+    "@openzeppelin/hardhat-upgrades": "^3.9.1",
     "ethers": "^6.15.0"
   }
 }

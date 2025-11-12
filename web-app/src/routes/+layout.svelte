@@ -1,6 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
 	import { _ } from 'svelte-i18n';
+	import { page } from '$app/stores';
 	import '$lib/i18n';
 	
 	// Accept SvelteKit page props (this suppresses the warning)
@@ -10,12 +11,61 @@
 	// Custom stores
 	import { theme } from '$lib/stores/theme.js';
 	import { locale } from '$lib/stores/locale.js';
+	import { walletStore, autoReconnectWallet, setupWalletListeners } from '$lib/stores/wallet.js';
 	import { detectMetaMaskTheme } from '$lib/utils/metamask.js';
+	import WalletConnect from '$lib/components/WalletConnect.svelte';
 	
+	// Mobile menu state
+	let mobileMenuOpen = false;
+
+	function toggleMobileMenu() {
+		mobileMenuOpen = !mobileMenuOpen;
+		if (mobileMenuOpen && typeof document !== 'undefined') {
+			// Focus the mobile menu for keyboard navigation
+			setTimeout(() => {
+				const closeButton = document.querySelector('.mobile-menu-close');
+				if (closeButton) closeButton.focus();
+			}, 100);
+		}
+	}
+
+	function closeMobileMenu() {
+		mobileMenuOpen = false;
+	}
+
+	// Reactive variable for current path
+	$: currentPath = $page.url.pathname;
+	
+	// Function to check if a path is active
+	function isActive(path, current = currentPath) {
+		// Special case for home page
+		if (path === '/') {
+			return current === '/';
+		}
+		
+		// For other pages, check if current path starts with the menu path
+		return current.startsWith(path);
+	}
+
 	// Initialize stores
-	onMount(() => {
+	onMount(async () => {
 		locale.init();
-		detectMetaMaskTheme();
+		
+		// Initialize wallet with error handling
+		try {
+			await autoReconnectWallet();
+			setupWalletListeners();
+		} catch (error) {
+			console.error('🚨 Wallet initialization error:', error);
+			// Don't throw - app should continue working without wallet
+		}
+		
+		try {
+			detectMetaMaskTheme();
+		} catch (error) {
+			console.error('🚨 MetaMask theme detection error:', error);
+			// Don't throw - app should continue working
+		}
 	});
 	
 	// Handle locale changes
@@ -27,10 +77,13 @@
 	$: if (typeof document !== 'undefined') {
 		document.body.setAttribute('data-theme', $theme);
 	}
+
+	// Get current year
+	const currentYear = new Date().getFullYear();
 </script>
 
 <svelte:head>
-	<title>{$_('meta.title', { default: 'Doichain wDOI/USDT Pool' })}</title>
+	<title>{$_('meta.title', { default: 'Doichain wDOI' })}</title>
 	<meta name="description" content={$_('meta.description', { default: 'Trade wDOI tokens with USDT instantly via MetaMask' })} />
 </svelte:head>
 
@@ -40,17 +93,68 @@
 			<div class="nav-brand">
 				<a href="/" class="brand-link">
 					<img src="/images/doichain-logo.svg" alt="Doichain" />
-					<span>wDOI Pool</span>
+					<span>wDOI</span>
 				</a>
 			</div>
 
-			<div class="nav-menu">
-				<a href="/" class="nav-link">{$_('nav.swap', { default: 'Swap' })}</a>
-				<a href="/liquidity" class="nav-link">{$_('nav.liquidity', { default: 'Liquidity' })}</a>
-				<a href="/bridge" class="nav-link">{$_('nav.bridge', { default: 'Bridge' })}</a>
+			<!-- Desktop Menu -->
+			<div class="nav-menu desktop-menu">
+				<a href="/" class="nav-link" class:active={isActive('/', currentPath)}>{$_('nav.swap', { default: 'Trading' })}</a>
+				<a href="/reserves" class="nav-link" class:active={isActive('/reserves', currentPath)}>{$_('nav.reserves', { default: 'Reserves' })}</a>
+				<a href="/liquidity" class="nav-link" class:active={isActive('/liquidity', currentPath)}>{$_('nav.liquidity', { default: 'Liquidity' })}</a>
+				
+				<!-- Admin-only pages -->
+				{#if $walletStore.isCustodian || $walletStore.isMerchant || $walletStore.isAdmin}
+					<div class="dropdown">
+						<a href="/custodian" class="nav-link dropdown-toggle" class:active={isActive('/custodian', currentPath) || isActive('/merchant', currentPath) || isActive('/bridge', currentPath) || isActive('/direct', currentPath)}>
+							{$_('nav.custodian', { default: 'Custodian' })} ▼
+						</a>
+						<div class="dropdown-menu">
+							{#if $walletStore.isCustodian || $walletStore.isAdmin}
+								<div class="dropdown-group">
+									<div class="dropdown-label">Custodian</div>
+									<a href="/custodian" class="dropdown-item">📊 Basic</a>
+									<a href="/custodian/enhanced" class="dropdown-item">🎯 Enhanced</a>
+								</div>
+							{/if}
+							
+							{#if $walletStore.isMerchant || $walletStore.isAdmin}
+								<div class="dropdown-group">
+									<div class="dropdown-label">Merchant</div>
+									<a href="/merchant" class="dropdown-item">🏪 Operations</a>
+								</div>
+							{/if}
+							
+							{#if $walletStore.isAdmin}
+								<div class="dropdown-group">
+									<div class="dropdown-label">Admin</div>
+									<a href="/bridge" class="dropdown-item">🌉 Bridge</a>
+								</div>
+							{/if}
+							
+							<div class="dropdown-group">
+								<div class="dropdown-label">Trading</div>
+								<a href="/direct" class="dropdown-item">⚡ Direct Pool</a>
+							</div>
+						</div>
+					</div>
+				{/if}
 			</div>
 			
 			<div class="nav-controls">
+				<!-- Wallet Connect -->
+				<WalletConnect />
+				
+				<!-- Mobile Menu Button -->
+				<button 
+					class="mobile-menu-toggle"
+					on:click={toggleMobileMenu}
+					aria-label="Toggle Navigation Menu"
+				>
+					<span class="hamburger-line" class:open={mobileMenuOpen}></span>
+					<span class="hamburger-line" class:open={mobileMenuOpen}></span>
+					<span class="hamburger-line" class:open={mobileMenuOpen}></span>
+				</button>
 				<!-- Language Selector -->
 				<select 
 					value={$locale}
@@ -76,6 +180,75 @@
 				</button>
 			</div>
 		</nav>
+
+		<!-- Mobile Menu Overlay -->
+		{#if mobileMenuOpen}
+			<div 
+				class="mobile-menu-overlay" 
+				on:click={closeMobileMenu}
+				on:keydown={(e) => e.key === 'Escape' && closeMobileMenu()}
+				role="button"
+				tabindex="0"
+				aria-label="Close mobile menu"
+			></div>
+		{/if}
+
+		<!-- Mobile Slide Menu -->
+		<div class="mobile-menu" class:open={mobileMenuOpen}>
+			<div class="mobile-menu-header">
+				<div class="mobile-brand">
+					<img src="/images/doichain-logo.svg" alt="Doichain" />
+					<span>wDOI</span>
+				</div>
+				<button 
+					class="mobile-menu-close" 
+					on:click={closeMobileMenu}
+					aria-label="Close mobile menu"
+				>
+					✕
+				</button>
+			</div>
+			
+			<div class="mobile-menu-content">
+				<a href="/" class="mobile-nav-link" class:active={isActive('/', currentPath)} on:click={closeMobileMenu}>
+					🔄 {$_('nav.swap', { default: 'Trading' })}
+				</a>
+				<a href="/reserves" class="mobile-nav-link" class:active={isActive('/reserves', currentPath)} on:click={closeMobileMenu}>
+					📊 {$_('nav.reserves', { default: 'Reserves' })}
+				</a>
+				<a href="/liquidity" class="mobile-nav-link" class:active={isActive('/liquidity', currentPath)} on:click={closeMobileMenu}>
+					💧 {$_('nav.liquidity', { default: 'Liquidity' })}
+				</a>
+				
+				<!-- Admin-only mobile links -->
+				{#if $walletStore.isCustodian || $walletStore.isAdmin}
+					<a href="/custodian" class="mobile-nav-link" class:active={isActive('/custodian', currentPath)} on:click={closeMobileMenu}>
+						📊 {$_('nav.custodian', { default: 'Custodian' })} - Basic
+					</a>
+					<a href="/custodian/enhanced" class="mobile-nav-link" class:active={isActive('/custodian/enhanced', currentPath)} on:click={closeMobileMenu}>
+						🎯 {$_('nav.custodian', { default: 'Custodian' })} - Enhanced
+					</a>
+				{/if}
+				
+				{#if $walletStore.isMerchant || $walletStore.isAdmin}
+					<a href="/merchant" class="mobile-nav-link" class:active={isActive('/merchant', currentPath)} on:click={closeMobileMenu}>
+						🏪 {$_('nav.merchant', { default: 'Merchant' })} Operations
+					</a>
+				{/if}
+				
+				{#if $walletStore.isAdmin}
+					<a href="/bridge" class="mobile-nav-link" class:active={isActive('/bridge', currentPath)} on:click={closeMobileMenu}>
+						🌉 {$_('nav.bridge', { default: 'Bridge' })} Operations
+					</a>
+				{/if}
+				
+				{#if $walletStore.isCustodian || $walletStore.isMerchant || $walletStore.isAdmin}
+					<a href="/direct" class="mobile-nav-link" class:active={isActive('/direct', currentPath)} on:click={closeMobileMenu}>
+						⚡ {$_('nav.direct', { default: 'Direct' })} Pool
+					</a>
+				{/if}
+			</div>
+		</div>
 	</header>
 
 	<main>
@@ -93,7 +266,7 @@
 				<a href="/docs">{$_('footer.docs', { default: 'Documentation' })}</a>
 			</div>
 			<div class="footer-info">
-				<p>&copy; 2024 Doichain wDOI Pool. {$_('footer.rights', { default: 'All rights reserved.' })}</p>
+				<p>&copy; {currentYear} Doichain wDOI. {$_('footer.rights', { default: 'All rights reserved.' })}</p>
 			</div>
 		</div>
 	</footer>
@@ -205,10 +378,44 @@
 		margin-right: 0.5rem;
 	}
 	
-	.nav-menu {
+	.nav-menu.desktop-menu {
 		display: flex;
 		align-items: center;
 		gap: 1.5rem;
+	}
+
+	/* Mobile Menu Toggle Button */
+	.mobile-menu-toggle {
+		display: none;
+		flex-direction: column;
+		justify-content: space-around;
+		width: 24px;
+		height: 24px;
+		background: transparent;
+		border: none;
+		cursor: pointer;
+		padding: 0;
+		margin-right: 1rem;
+	}
+
+	.hamburger-line {
+		width: 100%;
+		height: 2px;
+		background: var(--text-primary);
+		transition: 0.3s;
+		transform-origin: 1px;
+	}
+
+	.hamburger-line.open:nth-child(1) {
+		transform: rotate(45deg);
+	}
+
+	.hamburger-line.open:nth-child(2) {
+		opacity: 0;
+	}
+
+	.hamburger-line.open:nth-child(3) {
+		transform: rotate(-45deg);
 	}
 
 	.nav-link {
@@ -233,6 +440,86 @@
 		background: rgba(255, 255, 255, 0.2);
 		color: var(--text-white);
 		backdrop-filter: blur(10px);
+	}
+
+	/* Dropdown Styles */
+	.dropdown {
+		position: relative;
+		display: inline-block;
+	}
+
+	.dropdown-toggle {
+		display: flex;
+		align-items: center;
+		gap: 0.25rem;
+		cursor: pointer;
+	}
+
+	.dropdown-menu {
+		position: absolute;
+		top: 100%;
+		left: 0;
+		min-width: 220px;
+		background: var(--bg-primary);
+		border: 1px solid var(--border-color);
+		border-radius: 6px;
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+		opacity: 0;
+		visibility: hidden;
+		transform: translateY(-10px);
+		transition: all 0.2s ease;
+		z-index: 1000;
+		overflow: hidden;
+	}
+
+	.dropdown:hover .dropdown-menu {
+		opacity: 1;
+		visibility: visible;
+		transform: translateY(0);
+	}
+
+	.dropdown-item {
+		display: block;
+		padding: 0.75rem 1rem;
+		color: var(--text-primary);
+		text-decoration: none;
+		transition: background-color 0.2s ease;
+		border-bottom: 1px solid var(--border-color);
+		font-weight: 500;
+	}
+
+	.dropdown-item:last-child {
+		border-bottom: none;
+	}
+
+	.dropdown-item:hover {
+		background: var(--bg-secondary);
+		color: var(--accent-color);
+	}
+
+	.dropdown-group {
+		border-bottom: 1px solid var(--border-color);
+	}
+
+	.dropdown-group:last-child {
+		border-bottom: none;
+	}
+
+	.dropdown-label {
+		padding: 0.5rem 1rem 0.25rem;
+		font-size: 0.75rem;
+		font-weight: 600;
+		color: var(--text-secondary);
+		text-transform: uppercase;
+		letter-spacing: 0.5px;
+		background: var(--bg-secondary);
+		border-bottom: 1px solid var(--border-color);
+	}
+
+	.dropdown-group .dropdown-item {
+		padding-left: 1.5rem;
+		border-bottom: none;
+		white-space: nowrap;
 	}
 	
 	.nav-controls {
@@ -294,6 +581,119 @@
 		border-color: rgba(255, 255, 255, 0.5);
 		transform: scale(1.05);
 	}
+
+	/* Mobile Menu Styles */
+	.mobile-menu-overlay {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background: rgba(0, 0, 0, 0.5);
+		z-index: 999;
+		opacity: 1;
+		animation: fadeIn 0.3s ease;
+		cursor: pointer;
+	}
+
+	.mobile-menu-overlay:focus {
+		outline: 2px solid var(--accent-color);
+		outline-offset: -2px;
+	}
+
+	@keyframes fadeIn {
+		from { opacity: 0; }
+		to { opacity: 1; }
+	}
+
+	.mobile-menu {
+		position: fixed;
+		top: 0;
+		left: -100%;
+		width: 280px;
+		height: 100%;
+		background: var(--bg-primary);
+		z-index: 1000;
+		transition: left 0.3s ease;
+		box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+		display: flex;
+		flex-direction: column;
+	}
+
+	.mobile-menu.open {
+		left: 0;
+	}
+
+	.mobile-menu-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: 1rem;
+		border-bottom: 1px solid var(--border-color);
+		background: var(--bg-secondary);
+	}
+
+	.mobile-brand {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+	}
+
+	.mobile-brand img {
+		width: 24px;
+		height: 24px;
+	}
+
+	.mobile-brand span {
+		font-weight: 700;
+		color: var(--text-primary);
+	}
+
+	.mobile-menu-close {
+		background: none;
+		border: none;
+		font-size: 1.5rem;
+		color: var(--text-primary);
+		cursor: pointer;
+		padding: 0.25rem;
+		border-radius: 4px;
+		transition: background-color 0.2s ease;
+	}
+
+	.mobile-menu-close:hover {
+		background: var(--border-color);
+	}
+
+	.mobile-menu-content {
+		flex: 1;
+		padding: 1rem 0;
+		overflow-y: auto;
+	}
+
+	.mobile-nav-link {
+		display: flex;
+		align-items: center;
+		padding: 1rem 1.5rem;
+		color: var(--text-primary);
+		text-decoration: none;
+		font-weight: 500;
+		transition: background-color 0.2s ease;
+		border-bottom: 1px solid var(--border-color);
+	}
+
+	.mobile-nav-link:hover {
+		background: var(--bg-secondary);
+	}
+
+	.mobile-nav-link:last-child {
+		border-bottom: none;
+	}
+
+	.mobile-nav-link.active {
+		background: var(--accent-color);
+		color: white;
+		font-weight: 600;
+	}
 	
 	main {
 		flex: 1;
@@ -353,16 +753,16 @@
 	@media (max-width: 768px) {
 		.navbar {
 			padding: 1rem;
-			flex-wrap: wrap;
-			gap: 1rem;
 		}
 
-		.nav-menu {
-			order: 3;
-			width: 100%;
-			justify-content: center;
-			padding-top: 1rem;
-			border-top: 1px solid rgba(255, 255, 255, 0.2);
+		/* Hide desktop menu on mobile */
+		.nav-menu.desktop-menu {
+			display: none;
+		}
+
+		/* Show mobile menu toggle */
+		.mobile-menu-toggle {
+			display: flex;
 		}
 
 		.nav-controls {

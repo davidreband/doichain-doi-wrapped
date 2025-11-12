@@ -1,0 +1,12 @@
+{
+  "network": "sepolia",
+  "proxy": "0x46338E2ba4983Dc8E3853DD6A7E6e9F55225ff32",
+  "implementation": "0xEf857cBA9330bA44082f7EF431c178fD300B89eF",
+  "admin": "0x60eAe063F1Fd429814cA4C65767fDF0d8991506E",
+  "custodian": "0x60eAe063F1Fd429814cA4C65767fDF0d8991506E",
+  "merchant": "0x60eAe063F1Fd429814cA4C65767fDF0d8991506E",
+  "deployedAt": "2025-11-10T14:17:04.762Z",
+  "blockNumber": 9600284,
+  "txHash": "0x99654c63c444a87ab7c7bc10222b2ff85d0d3a1a456bb12d2d749e7a6d66ba9b",
+  "version": "V2"
+}

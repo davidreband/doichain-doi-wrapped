@@ -26,6 +26,24 @@
  * ```
  */
 declare module '$env/static/private' {
+	export const VITE_NETWORK_NAME: string;
+	export const VITE_CHAIN_ID: string;
+	export const VITE_WDOI_TOKEN_ADDRESS: string;
+	export const VITE_USDT_TOKEN_ADDRESS: string;
+	export const VITE_USDT_POOL_ADDRESS: string;
+	export const VITE_UNISWAP_V3_FACTORY: string;
+	export const VITE_UNISWAP_V3_ROUTER: string;
+	export const VITE_UNISWAP_V3_POSITION_MANAGER: string;
+	export const VITE_UNISWAP_V3_QUOTER: string;
+	export const VITE_WETH_ADDRESS: string;
+	export const VITE_MERCHANT_REGISTRY_ADDRESS: string;
+	export const VITE_AUTHORIZED_MERCHANTS: string;
+	export const VITE_AUTHORIZED_CUSTODIANS: string;
+	export const VITE_AUTHORIZED_ADMINS: string;
+	export const VITE_SEPOLIA_RPC_URL: string;
+	export const VITE_MAINNET_RPC_URL: string;
+	export const VITE_DEV_MODE: string;
+	export const VITE_ENABLE_DEBUG_LOGS: string;
 	export const GJS_DEBUG_TOPICS: string;
 	export const LESSOPEN: string;
 	export const USER: string;
@@ -39,7 +57,6 @@ declare module '$env/static/private' {
 	export const npm_config_noproxy: string;
 	export const HOME: string;
 	export const CHROME_DESKTOP: string;
-	export const OLDPWD: string;
 	export const TERM_PROGRAM_VERSION: string;
 	export const DESKTOP_SESSION: string;
 	export const NVM_BIN: string;
@@ -161,6 +178,24 @@ declare module '$env/static/public' {
  */
 declare module '$env/dynamic/private' {
 	export const env: {
+		VITE_NETWORK_NAME: string;
+		VITE_CHAIN_ID: string;
+		VITE_WDOI_TOKEN_ADDRESS: string;
+		VITE_USDT_TOKEN_ADDRESS: string;
+		VITE_USDT_POOL_ADDRESS: string;
+		VITE_UNISWAP_V3_FACTORY: string;
+		VITE_UNISWAP_V3_ROUTER: string;
+		VITE_UNISWAP_V3_POSITION_MANAGER: string;
+		VITE_UNISWAP_V3_QUOTER: string;
+		VITE_WETH_ADDRESS: string;
+		VITE_MERCHANT_REGISTRY_ADDRESS: string;
+		VITE_AUTHORIZED_MERCHANTS: string;
+		VITE_AUTHORIZED_CUSTODIANS: string;
+		VITE_AUTHORIZED_ADMINS: string;
+		VITE_SEPOLIA_RPC_URL: string;
+		VITE_MAINNET_RPC_URL: string;
+		VITE_DEV_MODE: string;
+		VITE_ENABLE_DEBUG_LOGS: string;
 		GJS_DEBUG_TOPICS: string;
 		LESSOPEN: string;
 		USER: string;
@@ -174,7 +209,6 @@ declare module '$env/dynamic/private' {
 		npm_config_noproxy: string;
 		HOME: string;
 		CHROME_DESKTOP: string;
-		OLDPWD: string;
 		TERM_PROGRAM_VERSION: string;
 		DESKTOP_SESSION: string;
 		NVM_BIN: string;

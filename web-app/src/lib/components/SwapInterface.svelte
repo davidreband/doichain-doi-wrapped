@@ -40,46 +40,37 @@
 	let exchangeRate = '1.000000';
 	let priceImpact = '0.00';
 	
-	// Debug state
-	let showDebugInfo = false;
 	
 	import { getMetaMaskStatus } from '$lib/utils/metamask.js';
 	
-	// Reactive statements for debugging
-	$: {
-		console.log('🔄 SwapInterface state changed:', {
-			connected,
-			userAddress,
-			chainId,
-			usdtBalance,
-			wdoiBalance
-		});
-	}
+	// Reactive statements for debugging (disabled for cleaner console)
+	// $: {
+	//	console.log('🔄 SwapInterface state changed:', {
+	//		connected,
+	//		userAddress,
+	//		chainId,
+	//		usdtBalance,
+	//		wdoiBalance
+	//	});
+	// }
 	
-	$: {
-		console.log('🎯 UI will show:', connected ? 'SWAP INTERFACE' : 'CONNECT BUTTON');
-	}
+	// $: {
+	//	console.log('🎯 UI will show:', connected ? 'SWAP INTERFACE' : 'CONNECT BUTTON');
+	// }
 	
 	onMount(async () => {
-		console.log('🚀 SwapInterface mounted');
-		
 		// Check if user wants to auto-connect (we can use sessionStorage to remember)
 		const shouldAutoConnect = sessionStorage.getItem('wallet-auto-connect') === 'true';
 		
 		if (shouldAutoConnect) {
 			const status = await getMetaMaskStatus();
 			if (status.connected) {
-				console.log('💼 Auto-connecting from saved state');
 				handleWalletConnect({ userAddress: status.accounts[0], chainId: status.chainId });
 			}
-		} else {
-			console.log('🚫 Auto-connect disabled - user must manually connect');
 		}
 	});
 	
 	async function handleWalletConnect({ userAddress: addr, chainId: chain }) {
-		console.log('📥 handleWalletConnect called with:', { addr, chain });
-		
 		connected = true;
 		userAddress = addr;
 		chainId = chain;
@@ -87,7 +78,6 @@
 		// Remember that user wants auto-connect
 		sessionStorage.setItem('wallet-auto-connect', 'true');
 		
-		console.log('🔗 Wallet Connected - state updated:', { connected, userAddress, chainId });
 		await loadBalances();
 		
 		success = 'Wallet connected successfully!';
@@ -95,8 +85,6 @@
 	}
 	
 	function handleWalletDisconnect() {
-		console.log('📤 handleWalletDisconnect called - BEFORE:', { connected, userAddress });
-		
 		// Disable auto-connect for future page loads
 		sessionStorage.setItem('wallet-auto-connect', 'false');
 		
@@ -108,8 +96,6 @@
 		wdoiBalance = 0;
 		fromAmount = '';
 		toAmount = '';
-		
-		console.log('🔌 handleWalletDisconnect - AFTER:', { connected, userAddress, chainId });
 	}
 	
 	function handleSwapDirectionChange(newDirection) {
@@ -178,10 +164,6 @@
 			usdtBalance = parseFloat(ethers.formatUnits(usdtBalanceRaw, usdtDecimals));
 			wdoiBalance = parseFloat(ethers.formatUnits(wdoiBalanceRaw, wdoiDecimals));
 			
-			console.log('💰 Token Balances:', {
-				usdt: { raw: usdtBalanceRaw.toString(), formatted: usdtBalance, decimals: usdtDecimals },
-				wdoi: { raw: wdoiBalanceRaw.toString(), formatted: wdoiBalance, decimals: wdoiDecimals }
-			});
 			
 		} catch (err) {
 			console.error('Failed to load balances:', err);
@@ -227,13 +209,6 @@
 			const inputAmount = parseFloat(fromAmount);
 			const expectedOutput = parseFloat(toAmount);
 			
-			console.log('🔄 Starting swap:', {
-				direction: isUSDTToWDOI ? 'USDT -> wDOI' : 'wDOI -> USDT',
-				inputAmount,
-				expectedOutput,
-				inputToken: isUSDTToWDOI ? 'USDT' : 'wDOI',
-				outputToken: isUSDTToWDOI ? 'wDOI' : 'USDT'
-			});
 			
 			let inputAmountWei, minOutputWei;
 			
@@ -248,23 +223,18 @@
 				const currentAllowance = await usdtContract.allowance(userAddress, SEPOLIA_CONFIG.addresses.USDT_POOL);
 				
 				if (currentAllowance < inputAmountWei) {
-					console.log('💰 Approving USDT...');
 					const approveTx = await usdtContract.approve(SEPOLIA_CONFIG.addresses.USDT_POOL, inputAmountWei);
 					success = 'USDT approval submitted...';
 					await approveTx.wait();
-					console.log('✅ USDT approved');
 				}
 				
 				// Execute swap
-				console.log('🔄 Executing USDT → wDOI swap...');
 				const swapTx = await poolContract.swapUSDTForWDOI(inputAmountWei, minOutputWei, {
 					gasLimit: 300000
 				});
 				
 				success = `Swap transaction submitted: ${swapTx.hash.slice(0, 10)}...`;
 				const receipt = await swapTx.wait();
-				
-				console.log('✅ Swap completed:', receipt.hash);
 				success = `Swap successful! You received ${expectedOutput.toFixed(4)} wDOI for ${inputAmount} USDT`;
 				
 			} else {
@@ -279,23 +249,18 @@
 				const currentAllowance = await wdoiContract.allowance(userAddress, SEPOLIA_CONFIG.addresses.USDT_POOL);
 				
 				if (currentAllowance < inputAmountWei) {
-					console.log('💰 Approving wDOI...');
 					const approveTx = await wdoiContract.approve(SEPOLIA_CONFIG.addresses.USDT_POOL, inputAmountWei);
 					success = 'wDOI approval submitted...';
 					await approveTx.wait();
-					console.log('✅ wDOI approved');
 				}
 				
 				// Execute swap
-				console.log('🔄 Executing wDOI → USDT swap...');
 				const swapTx = await poolContract.swapWDOIForUSDT(inputAmountWei, minOutputWei, {
 					gasLimit: 300000
 				});
 				
 				success = `Swap transaction submitted: ${swapTx.hash.slice(0, 10)}...`;
 				const receipt = await swapTx.wait();
-				
-				console.log('✅ Swap completed:', receipt.hash);
 				success = `Swap successful! You received ${expectedOutput.toFixed(4)} USDT for ${inputAmount} wDOI`;
 			}
 			
@@ -389,53 +354,6 @@
 	{/if}
 </div>
 
-<!-- Debug info toggle -->
-<div class="debug-toggle">
-	<button 
-		class="debug-toggle-btn" 
-		on:click={() => showDebugInfo = !showDebugInfo}
-	>
-		{showDebugInfo ? '▲ Debug' : '▼ Debug'}
-	</button>
-</div>
-
-<!-- Debug info (collapsible) -->
-{#if showDebugInfo}
-	<div class="debug-info">
-		<div class="debug-section">
-			<div class="debug-title">Contracts</div>
-			<div class="debug-grid">
-				<span>wDOI:</span> <code class="address-full">{SEPOLIA_CONFIG.addresses.WDOI_TOKEN}</code>
-				<span>USDT:</span> <code class="address-full">{SEPOLIA_CONFIG.addresses.USDT_TOKEN}</code>
-				<span>Pool:</span> <code class="address-full">{SEPOLIA_CONFIG.addresses.USDT_POOL}</code>
-			</div>
-		</div>
-		
-		<div class="debug-section">
-			<div class="debug-title">Network</div>
-			<div class="debug-grid">
-				<span>Chain:</span> <code>{chainId || 'N/A'}</code>
-				<span>Status:</span> <span class="status {connected ? 'connected' : 'disconnected'}">{connected ? 'Connected' : 'Disconnected'}</span>
-			</div>
-			{#if connected && chainId && SEPOLIA_CONFIG.chainId && chainId !== SEPOLIA_CONFIG.chainId}
-				<div class="warning">⚠️ Wrong network</div>
-			{/if}
-		</div>
-		
-		{#if connected}
-		<div class="debug-section">
-			<div class="debug-title">State</div>
-			<div class="debug-grid">
-				<span>Address:</span> <code class="address-full">{userAddress}</code>
-				<span>USDT:</span> <code>{usdtBalance.toFixed(2)}</code>
-				<span>wDOI:</span> <code>{wdoiBalance.toFixed(2)}</code>
-				<span>Direction:</span> <code>{isUSDTToWDOI ? 'USDT→wDOI' : 'wDOI→USDT'}</code>
-			</div>
-		</div>
-		{/if}
-	</div>
-{/if}
-
 <style>
 	.swap-container {
 		max-width: 400px;
@@ -449,106 +367,6 @@
 		border-radius: 12px;
 		padding: 1.5rem;
 		border: 1px solid var(--border-color);
-	}
-	
-	.debug-toggle {
-		margin-top: 1rem;
-		text-align: center;
-	}
-	
-	.debug-toggle-btn {
-		background: transparent;
-		color: var(--text-secondary);
-		border: none;
-		padding: 0.3rem 0.8rem;
-		font-size: 0.75rem;
-		cursor: pointer;
-		transition: all 0.2s ease;
-		border-radius: 4px;
-	}
-	
-	.debug-toggle-btn:hover {
-		background: var(--bg-secondary);
-		color: var(--text-primary);
-	}
-	
-	.debug-info {
-		margin-top: 0.5rem;
-		padding: 0.8rem;
-		font-size: 0.7rem;
-		color: var(--text-secondary);
-		background: var(--bg-secondary);
-		border-radius: 6px;
-		border: 1px solid var(--border-color);
-		animation: slideDown 0.2s ease-out;
-	}
-	
-	.debug-section {
-		margin-bottom: 0.8rem;
-	}
-	
-	.debug-section:last-child {
-		margin-bottom: 0;
-	}
-	
-	.debug-title {
-		font-weight: 600;
-		color: var(--text-primary);
-		margin-bottom: 0.3rem;
-		font-size: 0.75rem;
-	}
-	
-	.debug-grid {
-		display: grid;
-		grid-template-columns: auto 1fr;
-		gap: 0.2rem 0.5rem;
-		align-items: center;
-	}
-	
-	.debug-grid span {
-		font-size: 0.7rem;
-	}
-	
-	.debug-grid code, .address-full {
-		background: var(--bg-primary);
-		padding: 0.1rem 0.3rem;
-		border-radius: 3px;
-		font-family: 'Courier New', monospace;
-		font-size: 0.65rem;
-		border: 1px solid var(--border-color);
-	}
-	
-	.address-full {
-		word-break: break-all;
-		line-height: 1.2;
-	}
-	
-	.status.connected {
-		color: #28a745;
-		font-weight: 600;
-	}
-	
-	.status.disconnected {
-		color: #dc3545;
-		font-weight: 600;
-	}
-	
-	.warning {
-		color: #dc3545;
-		font-weight: 600;
-		font-size: 0.7rem;
-		margin-top: 0.3rem;
-	}
-	
-	@keyframes slideDown {
-		from {
-			opacity: 0;
-			transform: translateY(-5px);
-		}
-		to {
-			opacity: 1;
-			transform: translateY(0);
-		}
 	}
 	
 	.error-message {

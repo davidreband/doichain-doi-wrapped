@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+.svelte-kit/
+dist/
+build/
+
+# Environment files
+.env.local
+.env.*.local
+
+# Development files
+.DS_Store
+*.log
+
+# Editor files
+.vscode/
+.idea/
+
+# Cache
+.cache/

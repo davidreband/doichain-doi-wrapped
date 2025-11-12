@@ -46,8 +46,6 @@
 	let reserveRatio = 0;
 
 	onMount(async () => {
-		console.log('🌉 BridgeInterface mounted');
-		
 		const shouldAutoConnect = sessionStorage.getItem('wallet-auto-connect') === 'true';
 		if (shouldAutoConnect) {
 			const status = await getMetaMaskStatus();
@@ -58,15 +56,12 @@
 	});
 
 	async function handleWalletConnect({ userAddress: addr, chainId: chain }) {
-		console.log('📥 handleWalletConnect called with:', { addr, chain });
-		
 		connected = true;
 		userAddress = addr;
 		chainId = chain;
 		
 		sessionStorage.setItem('wallet-auto-connect', 'true');
 		
-		console.log('🔗 Wallet Connected - state updated:', { connected, userAddress, chainId });
 		await loadUserData();
 		
 		success = 'Wallet connected successfully!';
@@ -74,8 +69,6 @@
 	}
 
 	function handleWalletDisconnect() {
-		console.log('📤 handleWalletDisconnect called');
-		
 		sessionStorage.setItem('wallet-auto-connect', 'false');
 		
 		connected = false;
@@ -332,17 +325,17 @@
 		}
 	}
 
-	// Reactive statements
-	$: {
-		console.log('🌉 BridgeInterface state:', {
-			connected,
-			userAddress,
-			isWrapping,
-			wdoiBalance,
-			totalReserves,
-			reserveRatio
-		});
-	}
+	// Reactive statements (debug disabled for cleaner console)
+	// $: {
+	//	console.log('🌉 BridgeInterface state:', {
+	//		connected,
+	//		userAddress,
+	//		isWrapping,
+	//		wdoiBalance,
+	//		totalReserves,
+	//		reserveRatio
+	//	});
+	// }
 </script>
 
 <div class="bridge-container">

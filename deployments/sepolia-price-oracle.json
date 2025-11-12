@@ -1,0 +1,24 @@
+{
+  "network": "sepolia",
+  "contractName": "DOIPriceOracle",
+  "address": "0x294D0D6114DB70f3fE54F5694D749F61a370ad2a",
+  "deployer": "0x60eAe063F1Fd429814cA4C65767fDF0d8991506E",
+  "initialPrice": 2294166,
+  "initialPriceUSD": 0.02294166,
+  "deploymentTime": "2025-11-06T18:05:53.800Z",
+  "txHash": "0x068f64788046914e304dfa5c62a23956f82247300a890bbcf02d9f5843f2133e",
+  "constructorArgs": [
+    2294166
+  ],
+  "roles": {
+    "DEFAULT_ADMIN_ROLE": "0x0000000000000000000000000000000000000000000000000000000000000000",
+    "PRICE_UPDATER_ROLE": "0xd96ba01d6560c2ab35f2940dd8d70c5f5fe06236c72674237120515918198fb0",
+    "EMERGENCY_ROLE": "0xbf233dd2aafeb4d50879c4aa5c81e96d92f6e6945c906a58f9f2d1c1631b4b26"
+  },
+  "configuration": {
+    "priceDecimals": 8,
+    "stalenessThreshold": 86400,
+    "maxDeviation": 2000,
+    "twapPeriod": 3600
+  }
+}

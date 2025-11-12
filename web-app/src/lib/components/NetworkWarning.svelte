@@ -1,93 +1,125 @@
 <script>
 	import { _ } from 'svelte-i18n';
+	import { networkStore } from '$lib/stores/network.js';
+	import { walletStore } from '$lib/stores/wallet.js';
 	
-	// This will be populated from stores when wallet is connected
 	export let visible = true;
-	export let networkName = 'SEPOLIA';
+	export let compact = false;
+	export let requiredChainId = 1; // Default to Ethereum Mainnet
 	
-	let isVisible = true;
+	// Use store for network info, with fallback to mainnet
+	$: networkInfo = $networkStore || { 
+		name: 'Ethereum Mainnet', 
+		short: 'MAINNET',
+		isConnected: false,
+		chainId: null
+	};
 	
-	function closeWarning() {
-		isVisible = false;
-	}
+	// Check wallet connection state
+	$: walletConnected = $walletStore?.isConnected || false;
+	
+	// Check if the current network matches the required one
+	$: isCorrectNetwork = walletConnected && networkInfo.isConnected && networkInfo.chainId === requiredChainId;
+	$: isConnectedButWrongNetwork = walletConnected && networkInfo.isConnected && networkInfo.chainId !== requiredChainId;
+	$: shouldShow = visible && walletConnected; // Only show when wallet is connected
 </script>
 
-{#if visible && isVisible}
-	<div class="network-warning">
-		<div class="warning-header">
-			<div class="warning-text">
-				<span class="warning-icon">⚠️</span>
-				<strong>{$_('network.testnetMode')}</strong>
-			</div>
-			<button class="close-btn" on:click={closeWarning} title="Close">
-				✕
-			</button>
+{#if shouldShow}
+	<div class="network-info" class:compact>
+		<div class="network-badge" 
+			 class:connected={networkInfo.isConnected} 
+			 class:correct={isCorrectNetwork}
+			 class:wrong={isConnectedButWrongNetwork}>
+			<span class="network-indicator">
+				{#if isCorrectNetwork}
+					✅
+				{:else if isConnectedButWrongNetwork}
+					⚠️
+				{:else if walletConnected && networkInfo.isConnected}
+					🟢
+				{:else}
+					🔗
+				{/if}
+			</span>
+			<span class="network-text">
+				{networkInfo.name}
+			</span>
 		</div>
 		
-		<div class="warning-content">
-			{$_('network.connectSepolia')}
-		</div>
+		{#if !compact}
+			<div class="network-description">
+				{$_('network.connectSepolia')}
+			</div>
+		{/if}
 	</div>
 {/if}
 
 <style>
-	.network-warning {
-		background: #fff3cd;
-		color: #856404;
+	.network-info {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
 		margin: 1rem 0;
-		border: 1px solid #ffeaa7;
-		border-radius: 8px;
-		font-size: 0.9rem;
-		overflow: hidden;
 	}
 	
-	.warning-header {
-		display: flex;
+	.network-info.compact {
+		margin: 0;
+	}
+	
+	.network-badge {
+		display: inline-flex;
 		align-items: center;
-		justify-content: space-between;
-		padding: 0.8rem 1rem 0.5rem 1rem;
-	}
-	
-	.warning-text {
-		display: flex;
-		align-items: center;
-	}
-	
-	.warning-icon {
-		margin-right: 0.5rem;
-	}
-	
-	.close-btn {
-		background: none;
-		border: none;
-		color: inherit;
-		font-size: 1rem;
-		cursor: pointer;
-		padding: 0.2rem 0.4rem;
-		border-radius: 3px;
+		background: rgba(24, 214, 133, 0.1);
+		color: var(--accent-color);
+		padding: 0.5rem 1rem;
+		border-radius: 20px;
+		border: 1px solid rgba(24, 214, 133, 0.2);
+		font-weight: 600;
+		font-size: 0.875rem;
+		gap: 0.5rem;
 		transition: all 0.2s ease;
-		opacity: 0.7;
-		line-height: 1;
 	}
 	
-	.close-btn:hover {
-		background: rgba(0, 0, 0, 0.1);
-		opacity: 1;
+	.network-badge:not(.connected) {
+		background: rgba(128, 128, 128, 0.1);
+		color: var(--text-secondary);
+		border-color: rgba(128, 128, 128, 0.2);
 	}
 	
-	.warning-content {
-		padding: 0 1rem 1rem 1rem;
+	.network-badge.correct {
+		background: rgba(34, 197, 94, 0.15);
+		color: #059669;
+		border-color: rgba(34, 197, 94, 0.3);
+	}
+	
+	.network-badge.wrong {
+		background: rgba(245, 158, 11, 0.15);
+		color: #d97706;
+		border-color: rgba(245, 158, 11, 0.3);
+	}
+	
+	.network-indicator {
+		font-size: 0.75rem;
+	}
+	
+	.network-text {
+		white-space: nowrap;
+	}
+	
+	.network-description {
+		margin-top: 0.75rem;
+		color: var(--text-secondary);
+		font-size: 0.875rem;
 		text-align: center;
+		max-width: 400px;
 	}
 	
-	:global([data-theme="dark"]) .network-warning {
-		background: #2d2416;
-		color: #f0c674;
-		border-color: #5d4e2a;
-		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+	.compact .network-description {
+		display: none;
 	}
 	
-	:global([data-theme="dark"]) .close-btn:hover {
-		background: rgba(255, 255, 255, 0.1);
+	:global([data-theme="dark"]) .network-badge {
+		background: rgba(24, 214, 133, 0.15);
+		border-color: rgba(24, 214, 133, 0.3);
 	}
 </style>

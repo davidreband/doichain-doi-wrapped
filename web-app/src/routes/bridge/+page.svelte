@@ -1,8 +1,26 @@
 <script>
 	import { onMount } from 'svelte';
+	import { goto } from '$app/navigation';
 	import { _ } from 'svelte-i18n';
 	import BridgeInterface from '$lib/components/BridgeInterface.svelte';
 	import NetworkWarning from '$lib/components/NetworkWarning.svelte';
+	import { walletStore } from '$lib/stores/wallet.js';
+
+	// Check access and redirect if needed (only in browser)
+	$: if (typeof window !== 'undefined' && $walletStore && !$walletStore.isLoading) {
+		if ($walletStore.isConnected) {
+			// User has connected wallet via global state
+			if (!$walletStore.isAdmin) {
+				// No access - redirect to home
+				console.log('🚫 Access denied: not admin');
+				goto('/');
+			}
+		} else {
+			// Wallet disconnected - redirect to home
+			console.log('🚫 Access denied: wallet not connected');
+			goto('/');
+		}
+	}
 
 	onMount(() => {
 		console.log('🌉 Bridge page mounted');
