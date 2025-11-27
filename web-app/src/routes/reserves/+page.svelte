@@ -5,6 +5,7 @@
 	import NetworkWarning from '$lib/components/NetworkWarning.svelte';
 	import { getContractAddresses, NETWORKS } from '$lib/config/addresses.js';
 	import { createSafeContract } from '$lib/utils/provider.js';
+	import { getApiUrl, API_CONFIG } from '$lib/config/api.js';
 
 	// State
 	let loading = true;
@@ -133,7 +134,7 @@
 	async function fetchReservesFromAPI() {
 		try {
 			apiStatus = 'checking';
-			const response = await fetch('http://localhost:3001/api/v1/reserves');
+			const response = await fetch(getApiUrl(API_CONFIG.ENDPOINTS.RESERVES));
 			if (response.ok) {
 				apiStatus = 'connected';
 				return await response.json();

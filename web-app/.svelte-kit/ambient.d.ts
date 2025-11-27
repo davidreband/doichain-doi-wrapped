@@ -42,6 +42,7 @@ declare module '$env/static/private' {
 	export const VITE_AUTHORIZED_ADMINS: string;
 	export const VITE_SEPOLIA_RPC_URL: string;
 	export const VITE_MAINNET_RPC_URL: string;
+	export const VITE_API_URL: string;
 	export const VITE_DEV_MODE: string;
 	export const VITE_ENABLE_DEBUG_LOGS: string;
 	export const GJS_DEBUG_TOPICS: string;
@@ -195,6 +196,7 @@ declare module '$env/dynamic/private' {
 		VITE_AUTHORIZED_ADMINS: string;
 		VITE_SEPOLIA_RPC_URL: string;
 		VITE_MAINNET_RPC_URL: string;
+		VITE_API_URL: string;
 		VITE_DEV_MODE: string;
 		VITE_ENABLE_DEBUG_LOGS: string;
 		GJS_DEBUG_TOPICS: string;
