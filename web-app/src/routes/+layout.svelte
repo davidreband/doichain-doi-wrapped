@@ -99,7 +99,7 @@
 
 			<!-- Desktop Menu -->
 			<div class="nav-menu desktop-menu">
-				<a href="/" class="nav-link" class:active={isActive('/', currentPath)}>{$_('nav.swap', { default: 'Trading' })}</a>
+				<a href="/" class="nav-link" class:active={isActive('/', currentPath)}>{$_('nav.home', { default: 'Home' })}</a>
 				<a href="/reserves" class="nav-link" class:active={isActive('/reserves', currentPath)}>{$_('nav.reserves', { default: 'Reserves' })}</a>
 				<a href="/liquidity" class="nav-link" class:active={isActive('/liquidity', currentPath)}>{$_('nav.liquidity', { default: 'Liquidity' })}</a>
 				
@@ -211,7 +211,7 @@
 			
 			<div class="mobile-menu-content">
 				<a href="/" class="mobile-nav-link" class:active={isActive('/', currentPath)} on:click={closeMobileMenu}>
-					🔄 {$_('nav.swap', { default: 'Trading' })}
+					🏠 {$_('nav.home', { default: 'Home' })}
 				</a>
 				<a href="/reserves" class="mobile-nav-link" class:active={isActive('/reserves', currentPath)} on:click={closeMobileMenu}>
 					📊 {$_('nav.reserves', { default: 'Reserves' })}
