@@ -23,8 +23,8 @@
 		
 		<div class="features-grid">
 			<div class="feature-card">
-				<h3>🌉 Bridge Technology</h3>
-				<p>Secure bridging between Doichain and Ethereum networks using proven custodial and automated bridge models.</p>
+				<h3>🏦 Custodial Wrapping</h3>
+				<p>Secure wrapping of Doichain tokens through trusted custodians with full reserve backing and transparency.</p>
 			</div>
 			
 			<div class="feature-card">

@@ -558,7 +558,7 @@
 					</span>
 				</div>
 				<div class="status-item">
-					<NetworkWarning compact={true} />
+					<NetworkWarning compact={true} alwaysShow={true} />
 				</div>
 			</div>
 			<div class="update-details">

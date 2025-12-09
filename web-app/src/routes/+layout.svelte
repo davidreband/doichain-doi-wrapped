@@ -101,12 +101,11 @@
 			<div class="nav-menu desktop-menu">
 				<a href="/" class="nav-link" class:active={isActive('/', currentPath)}>{$_('nav.home', { default: 'Home' })}</a>
 				<a href="/reserves" class="nav-link" class:active={isActive('/reserves', currentPath)}>{$_('nav.reserves', { default: 'Reserves' })}</a>
-				<a href="/liquidity" class="nav-link" class:active={isActive('/liquidity', currentPath)}>{$_('nav.liquidity', { default: 'Liquidity' })}</a>
 				
 				<!-- Admin-only pages -->
 				{#if $walletStore.isCustodian || $walletStore.isMerchant || $walletStore.isAdmin}
 					<div class="dropdown">
-						<a href="/custodian" class="nav-link dropdown-toggle" class:active={isActive('/custodian', currentPath) || isActive('/merchant', currentPath) || isActive('/bridge', currentPath) || isActive('/direct', currentPath)}>
+						<a href="/custodian" class="nav-link dropdown-toggle" class:active={isActive('/custodian', currentPath) || isActive('/merchant', currentPath) || isActive('/direct', currentPath)}>
 							{$_('nav.custodian', { default: 'Custodian' })} ▼
 						</a>
 						<div class="dropdown-menu">
@@ -115,6 +114,7 @@
 									<div class="dropdown-label">Custodian</div>
 									<a href="/custodian" class="dropdown-item">📊 Basic</a>
 									<a href="/custodian/enhanced" class="dropdown-item">🎯 Enhanced</a>
+									<a href="/custodian/liquidity" class="dropdown-item">💧 Liquidity</a>
 								</div>
 							{/if}
 							
@@ -128,7 +128,7 @@
 							{#if $walletStore.isAdmin}
 								<div class="dropdown-group">
 									<div class="dropdown-label">Admin</div>
-									<a href="/bridge" class="dropdown-item">🌉 Bridge</a>
+									<a href="/admin" class="dropdown-item">🛠️ Admin Panel</a>
 								</div>
 							{/if}
 							
@@ -216,9 +216,6 @@
 				<a href="/reserves" class="mobile-nav-link" class:active={isActive('/reserves', currentPath)} on:click={closeMobileMenu}>
 					📊 {$_('nav.reserves', { default: 'Reserves' })}
 				</a>
-				<a href="/liquidity" class="mobile-nav-link" class:active={isActive('/liquidity', currentPath)} on:click={closeMobileMenu}>
-					💧 {$_('nav.liquidity', { default: 'Liquidity' })}
-				</a>
 				
 				<!-- Admin-only mobile links -->
 				{#if $walletStore.isCustodian || $walletStore.isAdmin}
@@ -228,6 +225,9 @@
 					<a href="/custodian/enhanced" class="mobile-nav-link" class:active={isActive('/custodian/enhanced', currentPath)} on:click={closeMobileMenu}>
 						🎯 {$_('nav.custodian', { default: 'Custodian' })} - Enhanced
 					</a>
+					<a href="/custodian/liquidity" class="mobile-nav-link" class:active={isActive('/custodian/liquidity', currentPath)} on:click={closeMobileMenu}>
+						💧 {$_('nav.custodian', { default: 'Custodian' })} - Liquidity
+					</a>
 				{/if}
 				
 				{#if $walletStore.isMerchant || $walletStore.isAdmin}
@@ -236,11 +236,6 @@
 					</a>
 				{/if}
 				
-				{#if $walletStore.isAdmin}
-					<a href="/bridge" class="mobile-nav-link" class:active={isActive('/bridge', currentPath)} on:click={closeMobileMenu}>
-						🌉 {$_('nav.bridge', { default: 'Bridge' })} Operations
-					</a>
-				{/if}
 				
 				{#if $walletStore.isCustodian || $walletStore.isMerchant || $walletStore.isAdmin}
 					<a href="/direct" class="mobile-nav-link" class:active={isActive('/direct', currentPath)} on:click={closeMobileMenu}>

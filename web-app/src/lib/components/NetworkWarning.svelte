@@ -6,6 +6,7 @@
 	export let visible = true;
 	export let compact = false;
 	export let requiredChainId = 1; // Default to Ethereum Mainnet
+	export let alwaysShow = false; // Show even when wallet not connected (for public pages)
 	
 	// Use store for network info, with fallback to mainnet
 	$: networkInfo = $networkStore || { 
@@ -21,7 +22,10 @@
 	// Check if the current network matches the required one
 	$: isCorrectNetwork = walletConnected && networkInfo.isConnected && networkInfo.chainId === requiredChainId;
 	$: isConnectedButWrongNetwork = walletConnected && networkInfo.isConnected && networkInfo.chainId !== requiredChainId;
-	$: shouldShow = visible && walletConnected; // Only show when wallet is connected
+	$: shouldShow = visible && (
+		alwaysShow || // Show always on public pages
+		(walletConnected && networkInfo.isConnected) // Show only when connected on private pages
+	);
 </script>
 
 {#if shouldShow}
@@ -43,6 +47,9 @@
 			</span>
 			<span class="network-text">
 				{networkInfo.name}
+				{#if networkInfo.chainId}
+					(ID: {networkInfo.chainId})
+				{/if}
 			</span>
 		</div>
 		

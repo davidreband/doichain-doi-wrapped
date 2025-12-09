@@ -214,7 +214,7 @@
 					<span>• Earn trading fees</span>
 					<span>• Withdraw anytime</span>
 				</div>
-				<a href="/liquidity" class="action-button secondary">
+				<a href="/custodian/liquidity" class="action-button secondary">
 					Add Liquidity →
 				</a>
 			</div>

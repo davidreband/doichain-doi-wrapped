@@ -6,7 +6,9 @@ const NETWORKS = {
 	1: { name: 'Ethereum Mainnet', short: 'MAINNET' },
 	11155111: { name: 'Sepolia Testnet', short: 'SEPOLIA' },
 	5: { name: 'Goerli Testnet', short: 'GOERLI' },
-	137: { name: 'Polygon Mainnet', short: 'POLYGON' }
+	137: { name: 'Polygon Mainnet', short: 'POLYGON' },
+	31337: { name: 'Hardhat Local', short: 'LOCAL' },
+	1337: { name: 'Ganache Local', short: 'GANACHE' }
 };
 
 // Store for current network info
