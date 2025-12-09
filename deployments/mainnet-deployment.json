@@ -1,0 +1,20 @@
+{
+  "network": "mainnet",
+  "chainId": 1,
+  "timestamp": "2024-12-09T13:00:00.000Z",
+  "deployer": "0xbe40fb82b1c56ab813ffcf171ea12b35d6afa83e",
+  "contracts": {
+    "WDOI_TOKEN_V3": "0xA2B6c1a7EFB3dFa75E2d9DF1180b02668c06da72",
+    "WDOI_TOKEN": "0xA2B6c1a7EFB3dFa75E2d9DF1180b02668c06da72",
+    "USDT_TOKEN": "0xdAC17F958D2ee523a2206206994597C13D831ec7"
+  },
+  "verification": {
+    "verified": true,
+    "etherscan": "https://etherscan.io/address/0xA2B6c1a7EFB3dFa75E2d9DF1180b02668c06da72"
+  },
+  "notes": [
+    "Production deployment of wDOI token on Ethereum mainnet",
+    "Custodians and merchants must be added via admin functions",
+    "Real USDT token integration for production trading"
+  ]
+}
